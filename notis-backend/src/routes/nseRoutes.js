@@ -1,6 +1,14 @@
-module.exports = function (app, router) {
+let NseController = require("../app/nse/controllers/nseToken");
 
-    router.get('/health', (req, res) => {
-        res.status(200).send({data: 'OK'});
+
+
+module.exports = function(app, router) {
+
+    app.get('/health', (req, res) => {
+        res.status(200).send({
+            data: 'OK'
+        });
     });
+
+    app.get('/token', NseController.getToken);
 }
