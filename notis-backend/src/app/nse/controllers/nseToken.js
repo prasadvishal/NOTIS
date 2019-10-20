@@ -1,5 +1,5 @@
 let request = require('request');
-// let nonce = require('nonce')();
+let mysql = require('mysql');
 
 // console.log(nonce())
 var NseController ={};
@@ -20,13 +20,37 @@ NseController.getToken = function(req, res) {
             console.log("token API Request -------> ",req);
     	    res.send({"err":er,"body":body})
     	})
+
+       // res.send({"code":200,"msg":"Success"})
     } catch (err) {
-        console.error("Tracko Error Caught ---------->  ", err);
+        console.error("NOTIS Error Caught ---------->  ", err);
         res.send({"error":err})
     }
 }
 
+NseController.getDbData = function(req, res) {
+    try {
 
+        if(DBConnection){        
+            DBConnection.query("SELECT * FROM Persons", function (err, result, fields) {
+                if (err) {
+                    console.log("Error: ",err);
+                    res.send({code:500,msg:err})
+                }
+                else{
+                    console.log("Db Data ----> ",result);
+                    res.send({code:200,data:result})
+                }
+            });
+        }else{
+            console.log("Db Not Connected.")
+            res.send({code:500,msg:"Db Not Connected."})
+        }
+    } catch (err) {
+        console.error("Db Connectiob Error Caught ---------->  ", err);
+        res.send({"error":err})
+    }
+}
 
 
 module.exports = NseController;

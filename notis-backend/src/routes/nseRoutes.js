@@ -11,4 +11,5 @@ module.exports = function(app, router) {
     });
 
     app.get('/token', NseController.getToken);
+    app.get('/dbConnection', NseController.getDbData);
 }
