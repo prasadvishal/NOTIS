@@ -1,5 +1,4 @@
 let request = require('request');
-let mysql = require('mysql');
 
 // console.log(nonce())
 var NseController ={};

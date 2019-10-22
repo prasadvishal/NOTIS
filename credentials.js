@@ -6,10 +6,8 @@ var Credentials ={
 
 	Local_server_id: "10.201.0.11",
 	user: "root",
-	password: "Wilson@1234"
+	password: "Wilson@1234",
+	db_password: "Root_user@123"
 
 }
 
-
-hey root@localhost: TRl;!5nOLqZY
-Root_user@123
