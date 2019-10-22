@@ -2,8 +2,11 @@ let config = require('./config/Config');
 let app = require('./app');
 let express = require("express");
 let mysql = require('mysql');
-
+// var Sequelize = require('sequelize');
 let router = express.Router();
+
+global.C = require('./config/Constants');
+
 
 
 app.listen(config.PORT, () => {
@@ -18,7 +21,7 @@ function createDbConnection(){
           //host: "10.201.0.11",
           host: "localhost",
           user: "root",
-          password: "Root_user@123",
+          password: "root",
           database: "exchange"
         });
 
@@ -32,3 +35,32 @@ function createDbConnection(){
           }
         });
 }
+
+// let mysql_db = {
+//   database: "exchange",
+//   user: "root",
+//   password: "Root_user@123",
+//   host: "localhost"
+// }
+// //------------MySQL Connection ------------//
+// var sequelize = new Sequelize(mysql_db.database, mysql_db.user, mysql_db.password, {
+//   host: mysql_db.host,
+//   dialect: 'mysql',
+//   operatorsAliases: false,
+
+//   pool: {
+//     max: 5,
+//     min: 0,
+//     acquire: 30000,
+//     idle: 10000
+//   }
+// });
+
+// sequelize.authenticate().then(() => {
+//     console.log('Connected to MySQL ' + mysql_db.database + ' database.');
+//     global.sequelizeConnection = sequelize;
+// }).catch(err => {
+//     console.error('Unable to connect to the database ' + mysql_db.database + ' :', err);
+//     global.Sequelize = null;
+// });
+// //------------MySQL Connection ------------//
