@@ -4,6 +4,7 @@ let Utils = require('../../../config/Utils.js');
 let NseResModel = require('../models/NseResModel');
 let NseDataModel = require('../models/NseDataModel');
 let NseApiLogModel = require('../models/NseApiLogModel');
+let moment = require('moment');
 
 class NseUtils{
     constructor(){
@@ -66,10 +67,10 @@ class NseUtils{
         })
     }
 
-    getMsgId(){
+    async getMsgId(){
         //TODO make function to get msgId
         //make db to query to get todays date and count nse apis
-
+        await this.getTodaysRequestCount();
         return '1234098392004904';
     }
 
@@ -142,6 +143,19 @@ class NseUtils{
 
     getTodaysRequestCount(){
         //make db query here
+        return new Promise((resolve, reject) => { 
+            let todaysData = NseResModel.findAll({
+                where: {
+                    createdAt: {
+                        $like: moment().format('YYYY-MM-DD')+ '%'
+                    },
+                },
+                    raw: true
+                
+            })
+            console.log(todaysData,"*%%%%%%%%%%%%%%%%55");
+            resolve('true');
+        })
     }
 }
 
