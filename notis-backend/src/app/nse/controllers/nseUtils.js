@@ -5,6 +5,8 @@ let NseResModel = require('../models/NseResModel');
 let NseDataModel = require('../models/NseDataModel');
 let NseApiLogModel = require('../models/NseApiLogModel');
 let moment = require('moment');
+let Sequelize = require('sequelize');
+const Op = Sequelize.Op;
 
 class NseUtils{
     constructor(){
@@ -143,18 +145,23 @@ class NseUtils{
 
     getTodaysRequestCount(){
         //make db query here
-        return new Promise((resolve, reject) => { 
-            let todaysData = NseResModel.findAll({
+        return new Promise(async (resolve, reject) => { 
+            console.log("moment().format('YYYY-MM-DD')+ '%'", moment().format('YYYY-MM-DD')+ '%');
+            let todaysData = await NseResModel.count({
                 where: {
                     createdAt: {
-                        $like: moment().format('YYYY-MM-DD')+ '%'
+                        [Op.gte]: moment().format('YYYY-MM-DD')
                     },
                 },
                     raw: true
                 
             })
-            console.log(todaysData,"*%%%%%%%%%%%%%%%%55");
-            resolve('true');
+            console.log(JSON.stringify(todaysData),"*%%%%%%%%%%%%%%%%55");
+            let count = 100000000+todaysData;
+            // count = ''+count;
+            // count = (count.split('').shift()).join('');
+            // console.log("vnfjvbkjfvn", count);
+            resolve(count);
         })
     }
 }
