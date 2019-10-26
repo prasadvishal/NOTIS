@@ -7,7 +7,7 @@ module.exports =  {
     MEMBER_CODE: "12345",
     // TRADE_TYPE: [
         'notis_cm':{
-            name: '',
+            name: 'notis_cm',
             url:'/notis-cm/trades-inquiry',
             table: 'snotis_cm'
         }

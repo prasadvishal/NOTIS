@@ -1,7 +1,9 @@
 let request = require('request');
-let mysql = require('mysql');
 let TokenController = require('./nseToken');
 let Utils = require('../../../config/Utils.js');
+let NseResModel = require('../models/NseResModel');
+let NseDataModel = require('../models/NseDataModel');
+let NseApiLogModel = require('../models/NseApiLogModel');
 
 class NseUtils{
     constructor(){
@@ -17,10 +19,9 @@ class NseUtils{
             try{
                 let token = await tokenController.getToken();
                 console.log(token);
-                // let insertId = await this.insertReqInApiLog(tradeData.url, type);
                 let nseData = await this.makeRequestForData(tradeData.url, token);
-                await setNseDataInDb(nseData, tradeData.table);
-                await this.insertInApiLog(tradeData.url, type);
+                let nseDataId = await this.setNseDataInDb(nseData.responseData, tradeData);
+                await this.insertInApiLog(tradeData, nseData, nseDataId);
                 resolve("done");
             } catch(e){
                 reject(e);
@@ -37,21 +38,26 @@ class NseUtils{
                 "tradesInquiry": "0,ALL,,"
             }
             body = JSON.stringify(body);
+            let reqObj = {
+                url: `${C.NSE_HOST}${url}`,
+                method:'POST',
+                headers:{
+                    'Authorization':  `Bearer ${token}`,
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'nonce': that.utils.getNOnce()
+                },
+                json: true,
+                body: body
+            };
             console.log("${C.NSE_HOST}${url}", `${C.NSE_HOST}${url}`, body);
             try{
-                request({
-                    url: `${C.NSE_HOST}${url}`,
-                    method:'POST',
-                    headers:{
-                        'Authorization':  `Bearer ${token}`,
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                        'nonce': that.utils.getNOnce()
-                    },
-                    json: true,
-                    body: body
-                }, function(err, resp, body){
-                    console.log("***********", err, body)
-                    resolve(body);
+                request(reqObj, function(err, resp, body){
+                    console.log("***********", err, body);
+                    let returnData = {
+                        requestData: reqObj,
+                        responseData: body
+                    }
+                    resolve(returnData);
                 })
             } catch(ex){
                 console.log("ex========>>", ex);
@@ -73,9 +79,65 @@ class NseUtils{
      * @param req {object}: pass post request
      * @returns {integer}: returns id of the inserted data
      */
-    insertInApiLog(url, type, req){
-        //
-    } 
+    setNseDataInDb(nseData, tradeData){
+        console.log("inside setNseData", nseData);
+        return new Promise(async (resolve, reject) =>{
+            let obj = {
+                tradeType: tradeData.name,
+                dataAvailable: (!this.utils.isEmpty(nseData.data)),
+                messageCode: nseData.messages.code,
+                status: nseData.status
+            }
+            try{
+                if(DBConnection){
+                    let nseRes = await NseResModel.create(obj);
+                    if(!(this.utils.isEmpty(nseData.data))){
+                        let nseCsvData = [];
+                        let nseCsvRaw = nseData.data.actionsInquiry.split('^');
+                        for(data of nseCsvRaw){
+                            let dataPoints = data.split(',');
+                            let dataPointObj = {
+                                errCd: dataPoints[0],
+                                seqNo: dataPoints[1],
+                                actTrdNo: dataPoints[2],
+                                actDtTm: new Date(dataPoints[3]),
+                                actId: dataPoints[4],
+                                tradeType: tradeData.name,
+                                nseMainDataId: nseRes.dataValues.id
+                            }
+                            nseCsvData.push(dataPointObj);
+                        }
+                        let re = await NseDataModel.bulkCreate(nseCsvData);
+                        console.log("*****!!!!!!!!!!*******", re);
+                    }
+                    resolve(nseRes.dataValues.id)
+                } else{
+                    reject("error");
+                }
+            } catch(e){
+                reject(e);                
+            }
+        }) 
+    }
+
+    insertInApiLog(tradeData, nseData, id){
+        return new Promise(async (resolve, reject) =>{
+            try{ 
+                let obj = {
+                    tradeType: tradeData.name,
+                    request: JSON.stringify(nseData.requestData),
+                    response: JSON.stringify(nseData.responseData),
+                    requestUrl: tradeData.url,
+                    nseMainDataId: id
+                }
+                await NseApiLogModel.create(obj);
+                resolve("true");
+            } catch(er){
+                console.log(er);
+                reject(er);
+            }
+        })
+    }
 
 
     getTodaysRequestCount(){
