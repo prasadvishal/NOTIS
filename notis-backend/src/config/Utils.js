@@ -48,7 +48,7 @@ class Utils{
 
     getNOnce(){
         let d = new Date();
-        let buff = new Buffer(`${d.getFullYear()}${this.convertIn2Digits(d.getMonth()+1)}${this.convertIn2Digits(d.getDate())}${this.utils.convertIn2Digits(d.getHours())}${this.convertIn2Digits(d.getMinutes())}${this.utils.convertIn2Digits(d.getSeconds())}${this.convertIn2Digits(d.getMilliseconds())}:${this.get6DigitRandNo()}`);
+        let buff = new Buffer(`${d.getFullYear()}${this.convertIn2Digits(d.getMonth()+1)}${this.convertIn2Digits(d.getDate())}${this.convertIn2Digits(d.getHours())}${this.convertIn2Digits(d.getMinutes())}${this.convertIn2Digits(d.getSeconds())}${this.convertIn2Digits(d.getMilliseconds())}:${this.get6DigitRandNo()}`);
         let base64data = buff.toString('base64');
     
         // console.log('"' + data + '" converted to Base64 is "' + base64data + '"');

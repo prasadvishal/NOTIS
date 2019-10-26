@@ -1,21 +1,24 @@
 let request = require('request');
 let mysql = require('mysql');
 let TokenController = require('./nseToken');
+let Utils = require('../../../config/Utils.js');
 
 class NseUtils{
     constructor(){
+        this.utils = new Utils();
 
     }
 
     getNseData(trade_type){
         // let tradeData = C.TRADE_TYPE.find( o => o.name == trade_type);
-        let tradeData = C[tradeData];
+        let tradeData = C[trade_type];
         return new Promise(async (resolve, reject) => {
             let tokenController = new TokenController();
             try{
                 let token = await tokenController.getToken();
+                console.log(token);
                 // let insertId = await this.insertReqInApiLog(tradeData.url, type);
-                let nseData = await this.makeRequestForData(tradeData.url, token, insertId);
+                let nseData = await this.makeRequestForData(tradeData.url, token);
                 await setNseDataInDb(nseData, tradeData.table);
                 await this.insertInApiLog(tradeData.url, type);
                 resolve("done");
@@ -28,8 +31,15 @@ class NseUtils{
     makeRequestForData(url, token){
         return new Promise(async (resolve, reject) => {
             let that = this;
+            let body = {
+                "msgId": that.getMsgId(),
+                "dataFormat": C.DATA_FORMAT,
+                "tradesInquiry": "0,ALL,,"
+            }
+            body = JSON.stringify(body);
+            console.log("${C.NSE_HOST}${url}", `${C.NSE_HOST}${url}`, body);
             try{
-                request.post({
+                request({
                     url: `${C.NSE_HOST}${url}`,
                     method:'POST',
                     headers:{
@@ -37,18 +47,14 @@ class NseUtils{
                         'Content-Type': 'application/x-www-form-urlencoded',
                         'nonce': that.utils.getNOnce()
                     },
-                    body:{
-                        "version": C.VERSION,
-                        "data": {
-                            "msgId": that.getMsgId(),
-                            "dataFormat": C.DATA_FORMAT,
-                            "tradesInquiry": "0,ALL,,"
-                        }
-                    }
+                    json: true,
+                    body: body
                 }, function(err, resp, body){
-
+                    console.log("***********", err, body)
+                    resolve(body);
                 })
             } catch(ex){
+                console.log("ex========>>", ex);
                 reject(ex);
             }
         })

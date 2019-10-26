@@ -15,7 +15,7 @@ module.exports = function(app, router) {
     app.get('/getNseUtils', async function(req, res){
         let NseUtils = require("../app/nse/controllers/nseUtils");
         let nseUtils = new NseUtils();
-        res.send(await nseUtils.getNseData("ab", "cd"));
+        res.send(await nseUtils.getNseData(req.query.trade_type));
 
     });
 
