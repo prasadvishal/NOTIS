@@ -1,0 +1,161 @@
+ <div *ngIf="adsLoader" class="loader"><img style="width: 42px;" src="assets/images/loader.gif" alt="loading">
+ </div>
+    <div class="card">
+        <div class="card-block">
+        	<div class="row">
+                <div class="col">
+                    <div class="label">Date</div>
+                    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="login-form">
+	                    <div class="form-group col-sm-12 field" style="padding: 0;">
+	                        <select class="form-control" formControlName="dateLimit" id="dateLimit" name="dateLimit" >
+		            	      <option value="current" selected>Current</option>
+		            	      <option value="1month">1 Month</option>
+		            	      <option value="2month">2 Months</option>
+		            	      <!-- <option *ngFor="let mid of marketIds">{{mid}}</option> -->
+	                        </select>
+	                    </div>
+                	</form>
+                </div>
+                <div class="col">
+                    <div class="label">Total Buy Value</div>
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="12,10,300.00" [(ngModel)]="totalbuyValue" ng>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="label">Total Sell Value</div>
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="12,10,300.00" [(ngModel)]="totalbuyValue" ng>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="label">Total Trade Value</div>
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="12,10,300.00" [(ngModel)]="totalbuyValue" ng>
+                    </div>
+                </div>
+                
+                <div class="col">
+                    <div class="label">Total Trades</div>
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="12,10,300.00" [(ngModel)]="totalbuyValue" ng>
+                    </div>
+                </div>
+                <div class="col">
+                    <button type="button" class="btn btn-primary" (click)="resetFilters()">Refresh</button>
+                </div>
+           
+        	</div>
+          
+        <div  *ngIf="tradeDataList?.length > 0 else noData">
+            <!-- class="table-overflow  fix-height" -->
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th style="text-align: center;">Trade Date<span class="fa fa-calendar" aria-hidden="true"></span></th>
+                        <th style="text-align: center;">Market<span class="fa fa-shopping-bag" aria-hidden="true"></span></th>
+                        <th style="text-align: center;">Trade No<span class="fa fa-sort"></span></th>
+                        <th style="text-align: center;">Trade Time<span class="fa fa-clock-o" aria-hidden="true"></span></th> 
+                        <th style="text-align: center;">Symbol<span class="fa fa-sort"></span></th>
+                        <th style="text-align: center;">Series<span class="fa fa-sort"></span></th>
+                        <th style="text-align: center;">Quantity</th>
+                        <th style="text-align: center;">Price</th>
+                        <th style="text-align: center;">Trade Value</th>
+                        <th style="text-align: center;">Buy/Sell</th>
+                        <th style="text-align: center;">Order No</th>
+                        <th style="text-align: center;">Branch No</th>
+                        <th style="text-align: center;">User Id</th>
+                        <th style="text-align: center;">Client Type</th>
+                        <th style="text-align: center;">Client A/C</th>
+                        <th style="text-align: center;">CP Code</th>
+                        <th style="text-align: center;">Remarks</th>
+
+                        <!-- <th style="text-align: center;">Action</th> -->
+
+                        <!-- <th>Edit</th> -->
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor='let tradeData of tradeDataList'>
+                        <td>{{tradeData.trade_date? tradeData.trade_date: 'DD-MMM-YYYY'}}</td>
+                        <td>{{tradeData.market ? tradeData.market :'--'}}</td>
+                        <td>{{tradeData.trade_no? tradeData.trade_no: '--'}}</td>
+                        <td>{{tradeData.trade_no? tradeData.trade_time: 'HH:mm:ss'}}</td>
+                        <td style="text-align: center;width: 200px">>{{tradeData.symbol}}</td>
+                        <td style="text-align: center;width: 200px">{{tradeData.series}}</td>
+                        <!-- <td>{{ad.adlength}}</td> -->
+                         <td style="text-align: center;width: 200px">{{tradeData.quantity}}</td>
+                         <td style="text-align: center;width: 200px">{{tradeData.price}}</td>
+                         <td style="text-align: center;width: 200px">{{tradeData.trade_value}}</td>
+                         <td style="text-align: center;width: 200px">{{tradeData.buy_sell}}</td>
+                         <td style="text-align: center;width: 200px">{{tradeData.order_no}}</td>
+                         <td style="text-align: center;width: 200px">{{tradeData.branch_no}}</td>
+                         <td style="text-align: center;width: 200px">{{tradeData.user_id}}</td>
+                         <td style="text-align: center;width: 200px">{{tradeData.client_type}}</td>
+                         <td style="text-align: center;width: 200px">{{tradeData.client_ac}}</td>
+                         <td style="text-align: center;width: 200px">{{tradeData.cp_code}}</td>
+                         <td style="text-align: center;width: 200px">{{tradeData.remarks}}</td>
+                   </tr>
+                </tbody>
+            </table>
+        </div>
+
+   	</div>
+</div>
+
+<!-- Video Modal START -->
+<!-- <div class="modal fade" id="video-modal" data-backdrop="static" data-keyboard="false" data-reveal data-reset-on-close="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4>{{showAd.fulladname}} &nbsp; | &nbsp; {{showAd.country}}</h4>
+                <p> {{showAd.adurl}}</p>
+                <a class="modal-close" href="" data-dismiss="modal" (click)="closeVideoModal()">
+                    <i class="ti-close"></i>
+                </a>
+            </div>
+            <div class="modal-body">
+                <video width="300" id = "video" controls>
+                    <source src="{{showAd.s3url}}" type="video/mp4">
+                        <source src="{{showAd.s3url}}" type='video/3gpp; codecs="mp4v.20.8, samr"'>
+                </video>
+                
+            </div>
+        </div>
+    </div>
+</div> -->
+
+<!-- Video Modal END -->
+
+    <!--Delete Confirmation modal Start -->
+<!--     <div class="modal fade"  id="deleteModal" data-backdrop="static" data-keyboard="false">
+      <div class="modal-dialog"> -->
+
+        <!-- Modal content-->
+<!--         <div class="modal-content">
+          <div class="modal-body">
+            <p>Are you sure you want to delete?</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default btn-success"  (click)="DeleteAd()">Confirm</button>
+           
+            <button type="button" class="btn btn-default btn-danger" data-dismiss="modal" #closeDeleteBtn>Cancel</button>
+          </div>
+        </div>
+
+      </div>
+    </div> -->
+<!--Delete Confirmation modal End -->
+
+<!-- <script type="text/javascript">
+    $("#adsEdit").on('hidden.bs.modal', function (e) {
+      $("#adsEdit iframe").attr("src", $("#adsEdit iframe").attr("src"));
+    });
+
+    // $('#video-modal').on('shown.bs.modal', function () {
+    //   $('#video1')[0].play();
+    // });
+    // $('#video-modal').on('hidden.bs.modal', function (e) {
+    //   $('#video-modal video')[0].load();
+    // });
+</script> -->
