@@ -808,6 +808,8 @@ button.btn.btn-primary.btn-sm {margin-right: 5px;}
   color: white;
 }
 .modal-field{
-  margin: 5% !important;
-  padding-left:3% !important; 
+  margin: 3% !important;
+  color:#005691;
 }
+
+.modal-body { padding: 40px; }

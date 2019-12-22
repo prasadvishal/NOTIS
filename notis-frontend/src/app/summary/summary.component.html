@@ -134,97 +134,92 @@
             <div class="modal-body">
             	<form class="form-group" [formGroup]="filterform">
             		<!-- Row 1 <Radio Buttons> -->
-	            	<div class='row'>
-	            		<fieldset>
+	            	<div class='row' >
+	            		<fieldset style="width:80%;">
 	            			<legend>Row 1</legend>
-		        			<div class="form-group">
-		            		  	<label class="radio-inline">
+		            		  	<label class="radio-inline modal-field">
 		            		    	<input type="radio" name="tradeTypeFilter" value="all" formControlName="tradeTypeFilter" checked>All
 		            		  	</label>
-		        			</div>
-		            		<div class="form-group">		
-		            		  	<label class="radio-inline">
+		        				
+		            		  	<label class="radio-inline modal-field">
 		            		    	<input type="radio" name="tradeTypeFilter" value="buy" formControlName="tradeTypeFilter">All Buy
 		            		  	</label>
-		            		</div>
-		            		<div class="form-group">
-		            			<label class="radio-inline">
+		            			<label class="radio-inline modal-field">
 		            		    	<input type="radio" name="tradeTypeFilter" value="sell" formControlName="tradeTypeFilter">All Sell
 		            		  	</label>
-		            		</div>
 	            		</fieldset>
 	            	</div>
             		<!-- Row 2 <Select Dropdowns MarketType Symbols Series> -->
 	            	<div class='row'>
-		    		  	<div class="form-group col-sm-3" style="padding: 0;">
-                    	    <select class="form-control" formControlName="marketTypeFilter" id="marketTypeFilter" name="marketTypeFilter" >
+		    		  	<div class="modal-field col-sm-3" style="padding: 0;">
+                    	    <label for="marketTypeFilter">Market Type:</label>
+		    		  		<select class="form-control" formControlName="marketTypeFilter" id="marketTypeFilter" name="marketTypeFilter" >
                     	      <option disabled value="" selected>Select Market</option>
                     	      <option *ngFor="let mid of marketIds">{{mid}}</option>
                     	    </select>
-                    	    <label for="marketTypeFilter">Market Type:</label>
                     	</div>
 
-                    	<div class="form-group col-sm-3" style="padding: 0;">
+                    	<div class="modal-field col-sm-3" style="padding: 0;">
+                    	    <label for="symbolFilter">Symbol:</label>
                     	    <select class="form-control" formControlName="symbolFilter" id="symbolFilter" name="symbolFilter" >
                     	      <option disabled value="" selected>Select Symbol</option>
                     	      <option *ngFor="let mid of symbols">{{mid}}</option>
                     	    </select>
-                    	    <label for="symbolFilter">Symbol:</label>
                     	</div>
 
-                    	<div class="form-group col-sm-3" style="padding: 0;">
+                    	<div class="modal-field col-sm-3" style="padding: 0;">
+                    	    <label for="seriesFilter">Series:</label>
                     	    <select class="form-control" formControlName="seriesFilter" id="seriesFilter" name="seriesFilter" >
                     	      <option disabled value="" selected>Select Series</option>
                     	      <option *ngFor="let mid of series">{{mid}}</option>
                     	    </select>
-                    	    <label for="seriesFilter">Series:</label>
                     	</div>
 					</div>
 					<!-- Row 3 <Select Dropdowns BranchId UserId CliAccountId> -->
 	            	<div class='row'>
-		    		  	<div class="form-group col-sm-3" style="padding: 0;">
+		    		  	<div class="modal-field col-sm-3" style="padding: 0;">
+                    	    <label for="marketTypeFilter">Branch ID:</label>
                     	    <select class="form-control" formControlName="branchIdFilter" id="branchIdFilter" name="branchIdFilter" >
                     	      <option disabled value="" selected>Select Branch</option>
                     	      <option *ngFor="let mid of marketIds">{{mid}}</option>
                     	    </select>
-                    	    <label for="marketTypeFilter">Branch ID:</label>
                     	</div>
 
-                    	<div class="form-group col-sm-3" style="padding: 0;">
+                    	<div class="modal-field col-sm-3" style="padding: 0;">
+                    	    <label for="userFilter">User ID:</label>
                     	    <select class="form-control" formControlName="userFilter" id="userFilter" name="userFilter" >
                     	      <option disabled value="" selected>Select User</option>
                     	      <option *ngFor="let mid of symbols">{{mid}}</option>
                     	    </select>
-                    	    <label for="userFilter">User ID:</label>
                     	</div>
 
-                    	<div class="form-group col-sm-3" style="padding: 0;">
+                    	<div class="modal-field col-sm-3" style="padding: 0;">
+                    	    <label for="cliAccountFilter">CLI Account No:</label>
                     	    <select class="form-control" formControlName="cliAccountFilter" id="cliAccountFilter" name="cliAccountFilter" >
                     	      <option disabled value="" selected>Select Cli Account</option>
                     	      <option *ngFor="let mid of series">{{mid}}</option>
                     	    </select>
-                    	    <label for="cliAccountFilter">CLI Account No:</label>
                     	</div>
 					</div>
 					<!-- Row 4 <Select Dropdowns BranchId UserId CliAccountId> -->
 	            	<div class='row'>
-		    		  	<div class="form-group col-sm-3" style="padding: 0;">
+		    		  	<div class="modal-field col-sm-3" style="padding: 0;">
                     	   <label for="startTimeFilter">Start Time:</label>
 							<input type="time" id="startTimeFilter" name="startTimeFilter" >
                     	</div>
 
-		    		  	<div class="form-group col-sm-3" style="padding: 0;">
+		    		  	<div class="modal-field col-sm-3" style="padding: 0;">
                     	   <label for="endTimeFilter">End Time:</label>
 							<input type="time" id="endTimeFilter" name="endTimeFilter">
                     	</div>
 
-                    	<div class="form-group col-sm-3" style="padding: 0;">
+                    	<div class="modal-field col-sm-3" style="padding: 0;">
                 			<label class="radio-inline">
                 		  		<input type="radio" name="timmerCheck" value="1" formControlName="timmerCheck">Timmer
                 			</label>
                     	</div>
 
-		    		  	<div class="form-group col-sm-3" style="padding: 0;">
+		    		  	<div class="modal-field col-sm-3" style="padding: 0;">
                     	   <label for="timeIntervalFilter">Time Interval:</label>
 							<input type="text" id="timeIntervalFilter" name="timeIntervalFilter" value="00:00:00">
                     	</div>
@@ -232,23 +227,23 @@
 
 					<!-- Row 5 <Select Dropdowns BranchId UserId CliAccountId> -->
 	            	<div class='row'>
-		    		  	<div class="form-group col-sm-3" style="padding: 0;">
+		    		  	<div class="modal-field col-sm-3" style="padding: 0;">
                     	   <label for="filePath">Path:</label>
 							<input type="text" id="filePath" name="filePath" formControlName="filePath">
                     	</div>
 
-		    		  	<div class="form-group col-sm-3" style="padding: 0;">
+		    		  	<div class="modal-field col-sm-3" style="padding: 0;">
                     	   <label for="fileName">File Name:</label>
 							<input type="text" id="fileName" name="fileName" formControlName="fileName">
                     	</div>
 
-                    	<div class="form-group col-sm-3" style="padding: 0;">
+                    	<div class="modal-field col-sm-3" style="padding: 0;">
                 			<label class="radio-inline">
                 		  		<input type="radio" name="includeDateInFilename" value="1" formControlName="includeDateInFilename">Append Date To File Name
                 			</label>
                     	</div>
 
-		    		  	<div class="form-group col-sm-3" style="padding: 0;">
+		    		  	<div class="modal-field col-sm-3" style="padding: 0;">
 							<button class="icon-btn" style="width:100%;"><i class="ti-pencil-alt"></i>Change</button>
                     	</div>
 					</div>
@@ -256,23 +251,23 @@
 						<fieldset>
 							<legend>Trade</legend>
 							<div class="row">
-								<div class="form-group col-sm-4">		
+								<div class="modal-field col-sm-4">		
 								  	<label class="radio-inline">
 								    	<input type="radio" name="tradeTypeFilter" value="buy" formControlName="tradeTypeFilter">Buy
 								  	</label>
 								</div>
-								<div class="form-group col-sm-4">
+								<div class="modal-field col-sm-4">
 									<label class="radio-inline">
 								    	<input type="radio" name="tradeTypeFilter" value="sell" formControlName="tradeTypeFilter">Sell
 								  	</label>
 								</div>
 							</div>
 							<div class="row">
-    			    		  	<div class="form-group col-sm-4" style="padding: 0;">
+    			    		  	<div class="modal-field col-sm-4" style="padding: 0;">
     	                    	   <label for="startNoFilter">Start No:</label>
     								<input type="text" id="startNoFilter" name="startNoFilter" formControlName="startNoFilter">
     	                    	</div>
-    			    		  	<div class="form-group col-sm-4" style="padding: 0;">
+    			    		  	<div class="modal-field col-sm-4" style="padding: 0;">
     	                    	   <label for="endNoFilter">End No:</label>
     								<input type="text" id="endNoFilter" name="endNoFilter" formControlName="endNoFilter">
     	                    	</div>
@@ -282,7 +277,7 @@
 					<div class="row">
 						<fieldset>
 							<legend>Options</legend>
-							<div class="form-group col">
+							<div class="modal-field col">
 								<label class="radio-inline">
 							  		<input type="radio" name="tradeTypeFilter" value="buy" formControlName="tradeTypeFilter">Include CTCL Id in Transaction Backup File
 								</label>
