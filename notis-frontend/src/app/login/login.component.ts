@@ -32,13 +32,17 @@ export class LoginComponent implements OnInit {
 
 
   ngOnInit() {
-    this.form = this.fb.group({     // {5}
-    	marketId: ['', Validators.required],
-    	memberId: ['', Validators.required],
-      	userId: ['', Validators.required],
-      	password: ['', Validators.required]
-    });
-    
+  	if(localStorage.getItem('isLoggedIn') == 'true'){
+      	this.router.navigate(['/summary']);
+
+  	}else{
+  		this.form = this.fb.group({     // {5}
+	    	marketId: ['', Validators.required],
+	    	memberId: ['', Validators.required],
+	      	userId: ['', Validators.required],
+	      	password: ['', Validators.required]
+    	});
+  	}
     // this.returnUrl = '/summary';
     //this.authService.logout();
 

@@ -5,11 +5,10 @@
         <div class="side-nav-logo">
             <a href="index.html">
                 <div class="logo logo-dark" style="background-image: url('assets/images/nse-logo-light.jpg')"></div>
-<!--                 <div class="logo logo-white" style="background-image: url('assets/images/logo-white.png')"></div> -->
             </a>
-            <div class="mobile-toggle side-nav-toggle">
+<!--             <div class="mobile-toggle side-nav-toggle">
                 <a href="#"><i class="ti-arrow-circle-left"></i></a>
-            </div>
+            </div> -->
         </div>
         <ul class="side-nav-menu scrollable">
             <li class="nav-item">
@@ -18,33 +17,15 @@
                     <span class="title">Lock</span>
                     <!-- <span class="arrow"><i class="ti-angle-right"></i></span> -->
                 </a>
-                <!-- <ul class="dropdown-menu"> -->
-                   <!--  <li><a href="users.html">Users</a></li> -->
-                    <!-- <li><a [routerLink]="'/brands'">Brands</a></li> -->
-                    <!-- <li><a href="admaster.html">Ad Master</a></li> -->
-                    <!-- <li><a href="#">Video Master</a></li> -->
-                    <!-- <li><a [routerLink]="'/setupmaster'">Setup Master</a></li>
-                    <li><a [routerLink]="'/admaster'">Ad Master</a></li>
-                    <li><a [routerLink]="'/deleteRequest'">Delete Request</a></li> -->
-                    <!-- <li><a href="#">TV Screens</a></li>
-                    <li><a href="#">Look Up</a></li>
-                    <li><a href="#">Sync Channels</a></li>
-                    <li><a href="#">TV Ads</a></li>
-                    <li><a href="#">Live Ads</a></li>
-                    <li><a href="#">Help</a></li>
-                    <li><a href="#">Import Data</a></li>
-                    <li><a href="#">Generate URL</a></li>
-                    <li><a href="#">Upload Brand CSV</a></li> -->
-                <!-- </ul> -->
             </li>
-            <li class="nav-item">
-                <a [routerLink]="'/transaction-backup'">
+            <!-- <li class="nav-item">
+                <a style="cursor: pointer;"  (click)="showTransactionBackupPopup()" >
                     <span class="icon-holder"><i class="ti-harddrives"></i></span>
                     <span class="title">Transaction Backup</span>
                 </a>
             </li>
             <li class="nav-item">
-                <a href="'/trade-filter'">
+                <a href="/trade-filter">
                     <span class="icon-holder"><i class="ti-filter"></i></span>
                     <span class="title">Trade Filter</span>
                 </a>
@@ -54,7 +35,7 @@
                     <span class="icon-holder"><i class="ti-upload"></i></span>
                     <span class="title">Upload</span>
                 </a>
-            </li>
+            </li> -->
             <li class="nav-item">
                 <a href="/profile">
                     <span class="icon-holder"><i class="ti-user"></i></span>
@@ -89,3 +70,24 @@
     </div>
 </div>
 <!-- Side Nav END -->
+
+
+<!--Delete Confirmation modal Start -->
+    <div class="modal fade"  id="transactionBackupModal" data-backdrop="static" data-keyboard="false">
+      <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+          <div class="modal-body">
+            <p>Are you sure you want to delete?</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default btn-success">Confirm</button>
+           
+            <button type="button" class="btn btn-default btn-danger" data-dismiss="modal" #closeDeleteBtn>Cancel</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+<!--Delete Confirmation modal End -->

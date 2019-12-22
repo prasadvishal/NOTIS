@@ -1,5 +1,21 @@
  <div *ngIf="adsLoader" class="loader"><img style="width: 42px;" src="assets/images/loader.gif" alt="loading">
  </div>
+ 	<div class = "card">
+ 		<div class="card-block">
+ 			<div class="row">
+ 				<div class="col">
+					<button class="icon-btn" style="float:left; width:100%;" (click)="showTransactionBackupModal()" data-toggle="modal" data-target="#transaction-backup-modal"><i class="ti-harddrives"></i> Transaction Backup</button>
+ 				</div>
+ 				<div class="col">
+ 					<button class="icon-btn" style="width:100%;" (click)="showTransactionBackupModal()" data-toggle="modal" data-target="#transaction-backup-modal"><i class="ti-filter"></i> Trade Filter</button>
+ 				</div>
+ 				<div class="col">
+ 					<button class="icon-btn" style="float:right; width:100%;"><i class="ti-upload"></i> Upload</button>
+ 				</div>
+ 			</div>
+ 		</div>
+ 	</div>
+
     <div class="card">
         <div class="card-block">
         	<div class="row">
@@ -19,26 +35,26 @@
                 <div class="col">
                     <div class="label">Total Buy Value</div>
                     <div class="form-group">
-                        <input type="text" class="form-control" placeholder="12,10,300.00" [(ngModel)]="totalbuyValue" ng>
+                    	<span class="form-control">{{totalBuyValue}}</span>
                     </div>
                 </div>
                 <div class="col">
                     <div class="label">Total Sell Value</div>
                     <div class="form-group">
-                        <input type="text" class="form-control" placeholder="12,10,300.00" [(ngModel)]="totalbuyValue" ng>
+                        <span class="form-control">{{totalSellValue}}</span>
                     </div>
                 </div>
                 <div class="col">
                     <div class="label">Total Trade Value</div>
                     <div class="form-group">
-                        <input type="text" class="form-control" placeholder="12,10,300.00" [(ngModel)]="totalbuyValue" ng>
+                        <span class="form-control">{{totalTradeValue}}</span>
                     </div>
                 </div>
                 
                 <div class="col">
                     <div class="label">Total Trades</div>
                     <div class="form-group">
-                        <input type="text" class="form-control" placeholder="12,10,300.00" [(ngModel)]="totalbuyValue" ng>
+                        <span class="form-control">{{totalTrade}}</span>
                     </div>
                 </div>
                 <div class="col">
@@ -69,6 +85,7 @@
                         <th style="text-align: center;">Client A/C</th>
                         <th style="text-align: center;">CP Code</th>
                         <th style="text-align: center;">Remarks</th>
+                        <th style="text-align: center;">CTO Id</th>
 
                         <!-- <th style="text-align: center;">Action</th> -->
 
@@ -95,6 +112,7 @@
                          <td style="text-align: center;width: 200px">{{tradeData.client_ac}}</td>
                          <td style="text-align: center;width: 200px">{{tradeData.cp_code}}</td>
                          <td style="text-align: center;width: 200px">{{tradeData.remarks}}</td>
+                         <td style="text-align: center;width: 200px">{{tradeData.cto_id}}</td>
                    </tr>
                 </tbody>
             </table>
@@ -104,26 +122,190 @@
 </div>
 
 <!-- Video Modal START -->
-<!-- <div class="modal fade" id="video-modal" data-backdrop="static" data-keyboard="false" data-reveal data-reset-on-close="true">
+<div class="modal fade" id="transaction-backup-modal" data-backdrop="static" data-keyboard="false" data-reveal data-reset-on-close="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h4>{{showAd.fulladname}} &nbsp; | &nbsp; {{showAd.country}}</h4>
-                <p> {{showAd.adurl}}</p>
-                <a class="modal-close" href="" data-dismiss="modal" (click)="closeVideoModal()">
+                <h4>Transaction Backup</h4>
+                <a class="modal-close" href="" data-dismiss="modal">
                     <i class="ti-close"></i>
                 </a>
             </div>
             <div class="modal-body">
-                <video width="300" id = "video" controls>
-                    <source src="{{showAd.s3url}}" type="video/mp4">
-                        <source src="{{showAd.s3url}}" type='video/3gpp; codecs="mp4v.20.8, samr"'>
-                </video>
-                
+            	<form class="form-group" [formGroup]="filterform">
+            		<!-- Row 1 <Radio Buttons> -->
+	            	<div class='row'>
+	            		<fieldset>
+	            			<legend>Row 1</legend>
+		        			<div class="form-group">
+		            		  	<label class="radio-inline">
+		            		    	<input type="radio" name="tradeTypeFilter" value="all" formControlName="tradeTypeFilter" checked>All
+		            		  	</label>
+		        			</div>
+		            		<div class="form-group">		
+		            		  	<label class="radio-inline">
+		            		    	<input type="radio" name="tradeTypeFilter" value="buy" formControlName="tradeTypeFilter">All Buy
+		            		  	</label>
+		            		</div>
+		            		<div class="form-group">
+		            			<label class="radio-inline">
+		            		    	<input type="radio" name="tradeTypeFilter" value="sell" formControlName="tradeTypeFilter">All Sell
+		            		  	</label>
+		            		</div>
+	            		</fieldset>
+	            	</div>
+            		<!-- Row 2 <Select Dropdowns MarketType Symbols Series> -->
+	            	<div class='row'>
+		    		  	<div class="form-group col-sm-3" style="padding: 0;">
+                    	    <select class="form-control" formControlName="marketTypeFilter" id="marketTypeFilter" name="marketTypeFilter" >
+                    	      <option disabled value="" selected>Select Market</option>
+                    	      <option *ngFor="let mid of marketIds">{{mid}}</option>
+                    	    </select>
+                    	    <label for="marketTypeFilter">Market Type:</label>
+                    	</div>
+
+                    	<div class="form-group col-sm-3" style="padding: 0;">
+                    	    <select class="form-control" formControlName="symbolFilter" id="symbolFilter" name="symbolFilter" >
+                    	      <option disabled value="" selected>Select Symbol</option>
+                    	      <option *ngFor="let mid of symbols">{{mid}}</option>
+                    	    </select>
+                    	    <label for="symbolFilter">Symbol:</label>
+                    	</div>
+
+                    	<div class="form-group col-sm-3" style="padding: 0;">
+                    	    <select class="form-control" formControlName="seriesFilter" id="seriesFilter" name="seriesFilter" >
+                    	      <option disabled value="" selected>Select Series</option>
+                    	      <option *ngFor="let mid of series">{{mid}}</option>
+                    	    </select>
+                    	    <label for="seriesFilter">Series:</label>
+                    	</div>
+					</div>
+					<!-- Row 3 <Select Dropdowns BranchId UserId CliAccountId> -->
+	            	<div class='row'>
+		    		  	<div class="form-group col-sm-3" style="padding: 0;">
+                    	    <select class="form-control" formControlName="branchIdFilter" id="branchIdFilter" name="branchIdFilter" >
+                    	      <option disabled value="" selected>Select Branch</option>
+                    	      <option *ngFor="let mid of marketIds">{{mid}}</option>
+                    	    </select>
+                    	    <label for="marketTypeFilter">Branch ID:</label>
+                    	</div>
+
+                    	<div class="form-group col-sm-3" style="padding: 0;">
+                    	    <select class="form-control" formControlName="userFilter" id="userFilter" name="userFilter" >
+                    	      <option disabled value="" selected>Select User</option>
+                    	      <option *ngFor="let mid of symbols">{{mid}}</option>
+                    	    </select>
+                    	    <label for="userFilter">User ID:</label>
+                    	</div>
+
+                    	<div class="form-group col-sm-3" style="padding: 0;">
+                    	    <select class="form-control" formControlName="cliAccountFilter" id="cliAccountFilter" name="cliAccountFilter" >
+                    	      <option disabled value="" selected>Select Cli Account</option>
+                    	      <option *ngFor="let mid of series">{{mid}}</option>
+                    	    </select>
+                    	    <label for="cliAccountFilter">CLI Account No:</label>
+                    	</div>
+					</div>
+					<!-- Row 4 <Select Dropdowns BranchId UserId CliAccountId> -->
+	            	<div class='row'>
+		    		  	<div class="form-group col-sm-3" style="padding: 0;">
+                    	   <label for="startTimeFilter">Start Time:</label>
+							<input type="time" id="startTimeFilter" name="startTimeFilter" >
+                    	</div>
+
+		    		  	<div class="form-group col-sm-3" style="padding: 0;">
+                    	   <label for="endTimeFilter">End Time:</label>
+							<input type="time" id="endTimeFilter" name="endTimeFilter">
+                    	</div>
+
+                    	<div class="form-group col-sm-3" style="padding: 0;">
+                			<label class="radio-inline">
+                		  		<input type="radio" name="timmerCheck" value="1" formControlName="timmerCheck">Timmer
+                			</label>
+                    	</div>
+
+		    		  	<div class="form-group col-sm-3" style="padding: 0;">
+                    	   <label for="timeIntervalFilter">Time Interval:</label>
+							<input type="text" id="timeIntervalFilter" name="timeIntervalFilter" value="00:00:00">
+                    	</div>
+					</div>
+
+					<!-- Row 5 <Select Dropdowns BranchId UserId CliAccountId> -->
+	            	<div class='row'>
+		    		  	<div class="form-group col-sm-3" style="padding: 0;">
+                    	   <label for="filePath">Path:</label>
+							<input type="text" id="filePath" name="filePath" formControlName="filePath">
+                    	</div>
+
+		    		  	<div class="form-group col-sm-3" style="padding: 0;">
+                    	   <label for="fileName">File Name:</label>
+							<input type="text" id="fileName" name="fileName" formControlName="fileName">
+                    	</div>
+
+                    	<div class="form-group col-sm-3" style="padding: 0;">
+                			<label class="radio-inline">
+                		  		<input type="radio" name="includeDateInFilename" value="1" formControlName="includeDateInFilename">Append Date To File Name
+                			</label>
+                    	</div>
+
+		    		  	<div class="form-group col-sm-3" style="padding: 0;">
+							<button class="icon-btn" style="width:100%;"><i class="ti-pencil-alt"></i>Change</button>
+                    	</div>
+					</div>
+					<div class="row">
+						<fieldset>
+							<legend>Trade</legend>
+							<div class="row">
+								<div class="form-group col-sm-4">		
+								  	<label class="radio-inline">
+								    	<input type="radio" name="tradeTypeFilter" value="buy" formControlName="tradeTypeFilter">Buy
+								  	</label>
+								</div>
+								<div class="form-group col-sm-4">
+									<label class="radio-inline">
+								    	<input type="radio" name="tradeTypeFilter" value="sell" formControlName="tradeTypeFilter">Sell
+								  	</label>
+								</div>
+							</div>
+							<div class="row">
+    			    		  	<div class="form-group col-sm-4" style="padding: 0;">
+    	                    	   <label for="startNoFilter">Start No:</label>
+    								<input type="text" id="startNoFilter" name="startNoFilter" formControlName="startNoFilter">
+    	                    	</div>
+    			    		  	<div class="form-group col-sm-4" style="padding: 0;">
+    	                    	   <label for="endNoFilter">End No:</label>
+    								<input type="text" id="endNoFilter" name="endNoFilter" formControlName="endNoFilter">
+    	                    	</div>
+							</div>
+						</fieldset>
+					</div>
+					<div class="row">
+						<fieldset>
+							<legend>Options</legend>
+							<div class="form-group col">
+								<label class="radio-inline">
+							  		<input type="radio" name="tradeTypeFilter" value="buy" formControlName="tradeTypeFilter">Include CTCL Id in Transaction Backup File
+								</label>
+							</div>
+						</fieldset>
+					</div>
+            	</form>
+            	<div class="row">
+	 				<div class="col-sm-3">
+						<button class="modal-btn-ok" style="float:left; width:100%;">OK</button>
+	 				</div>
+	 				<div class="col-sm-3">
+	 					<button class="modal-btn-start" style="width:100%;">Start</button>
+	 				</div>
+	 				<div class="col-sm-3">
+	 					<button class="modal-btn-cancel" style="float:right; width:100%;">Cancel</button>
+	 				</div>
+            	</div>
+
             </div>
         </div>
     </div>
-</div> -->
+</div>
 
 <!-- Video Modal END -->
 
