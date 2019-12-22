@@ -11,18 +11,17 @@ const Op = Sequelize.Op;
 class NseUtils{
     constructor(){
         this.utils = new Utils();
-
     }
 
     getNseData(trade_type){
-        // let tradeData = C.TRADE_TYPE.find( o => o.name == trade_type);
         let tradeData = C[trade_type];
         return new Promise(async (resolve, reject) => {
-            let tokenController = new TokenController();
+            // let tokenController = new TokenController();
             try{
-                let token = await tokenController.getToken();
-                console.log(token);
-                let nseData = await this.makeRequestForData(tradeData.url, token);
+                // let token = await tokenController.getToken();
+                console.log("token");
+                let nseData = await this.makeRequestForData(tradeData);
+                console.log(nseData);
                 let nseDataId = await this.setNseDataInDb(nseData.responseData, tradeData);
                 await this.insertInApiLog(tradeData, nseData, nseDataId);
                 resolve("done");
@@ -32,48 +31,60 @@ class NseUtils{
         });
     }
 
-    makeRequestForData(url, token){
+    makeRequestForData(tradeData){
         return new Promise(async (resolve, reject) => {
             let that = this;
             let body = {
-                "msgId": that.getMsgId(),
-                "dataFormat": C.DATA_FORMAT,
-                "tradesInquiry": "0,ALL,,"
+                msgId: await that.getMsgId(),
+                url: tradeData.url
             }
-            body = JSON.stringify(body);
+            // body = JSON.stringify(body);
             let reqObj = {
-                url: `${C.NSE_HOST}${url}`,
-                method:'POST',
-                headers:{
-                    'Authorization':  `Bearer ${token}`,
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'nonce': that.utils.getNOnce()
-                },
-                json: true,
-                body: body
-            };
-            console.log("${C.NSE_HOST}${url}", `${C.NSE_HOST}${url}`, body);
-            try{
+                url: `${C.DATA_API_URL}`,
+                method: 'GET',
+                body: body,
+                timeout: 10000,
+                json: true
+            }
+            console.log("${C.NSE_HOST}${url}", body);
+            // try{
                 request(reqObj, function(err, resp, body){
-                    console.log("***********", err, body);
                     let returnData = {
                         requestData: reqObj,
                         responseData: body
                     }
                     resolve(returnData);
                 })
-            } catch(ex){
-                console.log("ex========>>", ex);
-                reject(ex);
-            }
+            // } catch(ex){
+            //     console.log("ex========>>", ex);
+            //     reject(ex);
+            // }
+            // let body = {
+            //     "msgId": that.getMsgId(),
+            //     "dataFormat": C.DATA_FORMAT,
+            //     "tradesInquiry": "0,ALL,,"
+            // }
+            
+            // let reqObj = {
+            //     url: `${C.NSE_HOST}${url}`,
+            //     method:'POST',
+            //     headers:{
+            //         'Authorization':  `Bearer ${token}`,
+            //         'Content-Type': 'application/x-www-form-urlencoded',
+            //         'nonce': that.utils.getNOnce()
+            //     },
+            //     json: true,
+            //     body: body
+            // };
         })
     }
 
     async getMsgId(){
         //TODO make function to get msgId
         //make db to query to get todays date and count nse apis
-        await this.getTodaysRequestCount();
-        return '1234098392004904';
+        let reqCount = await this.getTodaysRequestCount();
+        let dateString = (moment().format('YYYY-MM-DD')).split('-').join('')
+        return `${C.MEMBER_CODE}${dateString}${reqCount}`
     }
 
     /**
@@ -87,14 +98,14 @@ class NseUtils{
         return new Promise(async (resolve, reject) =>{
             let obj = {
                 tradeType: tradeData.name,
-                dataAvailable: (!this.utils.isEmpty(nseData.data)),
-                messageCode: nseData.messages.code,
-                status: nseData.status
+                dataAvailable: (!this.utils.isEmpty(nseData)) ? (!this.utils.isEmpty(nseData.data)) : false,
+                messageCode: (!this.utils.isEmpty(nseData)) ? nseData.messages.code : null,
+                status: (!this.utils.isEmpty(nseData)) ? nseData.status: null
             }
             try{
                 if(DBConnection){
                     let nseRes = await NseResModel.create(obj);
-                    if(!(this.utils.isEmpty(nseData.data))){
+                    if(!(this.utils.isEmpty(nseData)) &&!(this.utils.isEmpty(nseData.data))){
                         let nseCsvData = [];
                         let nseCsvRaw = nseData.data.actionsInquiry.split('^');
                         for(data of nseCsvRaw){
@@ -113,6 +124,7 @@ class NseUtils{
                         let re = await NseDataModel.bulkCreate(nseCsvData);
                         console.log("*****!!!!!!!!!!*******", re);
                     }
+                    console.log("*********", nseRes);
                     resolve(nseRes.dataValues.id)
                 } else{
                     reject("error");
@@ -147,10 +159,11 @@ class NseUtils{
         //make db query here
         return new Promise(async (resolve, reject) => { 
             console.log("moment().format('YYYY-MM-DD')+ '%'", moment().format('YYYY-MM-DD')+ '%');
+            
             let todaysData = await NseResModel.count({
                 where: {
                     createdAt: {
-                        [Op.gte]: moment().format('YYYY-MM-DD')
+                        [Op.gte]: moment().format('YYYY-MM-DD 00:00:00')
                     },
                 },
                     raw: true
@@ -158,9 +171,7 @@ class NseUtils{
             })
             console.log(JSON.stringify(todaysData),"*%%%%%%%%%%%%%%%%55");
             let count = 100000000+todaysData;
-            // count = ''+count;
-            // count = (count.split('').shift()).join('');
-            // console.log("vnfjvbkjfvn", count);
+            
             resolve(count);
         })
     }
