@@ -9,6 +9,10 @@ import { SummaryComponent } from './summary/summary.component';
 import { HeaderComponent } from './header/header.component';
 import { FooterComponent } from './footer/footer.component';
 import { SidebarComponent } from './sidebar/sidebar.component';
+import { ProfileComponent } from './profile/profile.component';
+import { ChangePasswordComponent } from './change-password/change-password.component';
+import { HelpComponent } from './help/help.component';
+import { LogoutComponent } from './logout/logout.component';
 // import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 
 
@@ -20,7 +24,11 @@ import { SidebarComponent } from './sidebar/sidebar.component';
     SummaryComponent,
     HeaderComponent,
     FooterComponent,
-    SidebarComponent
+    SidebarComponent,
+    ProfileComponent,
+    ChangePasswordComponent,
+    HelpComponent,
+    LogoutComponent
   ],
   imports: [
     BrowserModule,
