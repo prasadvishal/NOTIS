@@ -889,3 +889,25 @@ button.btn.btn-primary.btn-sm {margin-right: 5px;}
 .fa-user:hover {
   color: #949494;
 }
+
+.basic-profile-info-card {
+  width: 60%;
+  margin-right: 20%;
+  margin-left: 10%;
+  margin-top: 5%;
+  border: solid 1px;
+  border-color:#005691;
+}
+
+.card-header{
+  text-align: center;
+  margin: 2%;
+  font-size: 50px;
+  color: #005691;
+}
+
+.basic-profile-info-card-lable {
+  margin-left: 2%;
+  font-size: 25pt;
+  margin-bottom: 2%;
+}
