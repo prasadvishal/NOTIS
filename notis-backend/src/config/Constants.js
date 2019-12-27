@@ -5,6 +5,7 @@ module.exports =  {
     CLIENT_CRENDENTIALS: "client_credentials",
     tokenData:{},
     MEMBER_CODE: "12345",
+    DATA_API_URL: "http://10.10.11.214:3002",
     // TRADE_TYPE: [
         'notis_cm':{
             name: 'notis_cm',

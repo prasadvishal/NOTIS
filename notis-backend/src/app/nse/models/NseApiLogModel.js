@@ -5,7 +5,7 @@ let nseDataModel = DBConnection.define('nse_data_api', {
     id: { type: Sequelize.INTEGER, autoIncrement: true, primaryKey: true},
     tradeType: { type: Sequelize.STRING, allowNull: false },
     request: { type: Sequelize.TEXT, allowNull: false },
-    response: { type: Sequelize.TEXT, allowNull: false },
+    response: { type: Sequelize.TEXT, allowNull: true },
     requestUrl: { type: Sequelize.STRING, allowNull: false },
     nseMainDataId: {
         type: Sequelize.INTEGER,
