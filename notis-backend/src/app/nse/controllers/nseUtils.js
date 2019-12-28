@@ -203,6 +203,59 @@ class NseUtils{
                 })
                 console.log("User Data ----> ", userinfo)
                 if(userinfo && userinfo.length){
+                    let usertoken = await this.genrateToken();
+                    await NseUsersModel.update({
+                        token: usertoken
+                    },{
+                        where:{
+                            user_name: reqdata.body.user_name,
+                            password: reqdata.body.password
+                        }
+                    });
+                    console.log("Token ----> ",usertoken);
+                    userinfo[0]['token'] = usertoken;
+                    return resolve(this.ResponseController.successResponse(userinfo[0]));
+                }else{
+                    return resolve(this.ResponseController.notFoundErrorResponse(['user name','password']));
+                }
+            } 
+            catch(err){
+                console.log("Error Caught in userLogin() --------> ", err);
+                return reject(err)
+            }
+        })
+    }
+
+    async genrateToken(){
+        return new Promise( async (resolve, reject) =>{            
+            require('crypto').randomBytes(48, function(err, buffer) {
+                console.log("inside genrate token : ",buffer.toString('hex'))
+                return resolve(buffer.toString('hex'))
+            });
+        })
+    }
+
+    userLogout(reqdata){
+        return new Promise(async (resolve, reject) => {
+            try{
+                console.log("Reqdata.body ---> ",reqdata.body)
+                if(this.utils.isEmpty(reqdata) || this.utils.isEmpty(reqdata.body)){
+                    //console.log("Empty Data")
+                    return resolve(this.ResponseController.badRequestErrorResponse('req.body'))
+                }
+                let commoncheck = this.CommonController.commonCheck(reqdata, ['user_name', 'password'], 'body');
+                console.log("Common Check ----> ",commoncheck);
+                if(commoncheck && commoncheck.length){
+                    return resolve(this.ResponseController.badRequestErrorResponse(commoncheck))
+                }
+                let userinfo = await NseUsersModel.findAll({ 
+                    where:{
+                        user_name: reqdata.body.user_name,
+                        password: reqdata.body.password
+                    }
+                })
+                console.log("User Data ----> ", userinfo)
+                if(userinfo && userinfo.length){
                     return resolve(this.ResponseController.successResponse(userinfo));
                 }else{
                     return resolve(this.ResponseController.noContentSucessResponse());
