@@ -5,8 +5,11 @@ import { Component } from '@angular/core';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
+
+
 export class AppComponent {
   	title = 'notis-frontend';
+    
     getLoggedIn(){
     // var userData = JSON.parse(localStorage.getItem('userData'));
     // this.sessionkey = userData?userData.sessionkey:'';
@@ -17,7 +20,5 @@ export class AppComponent {
       return true;
     else
       return false;
-
-    //return true // always true for now
   }
 }

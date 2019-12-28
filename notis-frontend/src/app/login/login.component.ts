@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 // import { AuthService } from './../../auth/auth.service';
 import { Router } from '@angular/router';
-//import { LoginService } from '../../services/login/login.service';
+import { LoginService } from '../services/login/login.service';
 // import { LoginResultModel } from './model/LoginResultModel';
 //import * as $ from 'jquery'
 
@@ -18,15 +18,15 @@ export class LoginComponent implements OnInit {
 
   public form: FormGroup;                   // {1}
   private formSubmitAttempt: boolean; 	// {2}
-  // returnUrl: string;
-  // isLoggedIn$: boolean;
+  hideLoader: boolean = true;
+  isLoggedIn$: boolean;
   message: string = null;
   public loginbtn: string = 'Login';
   
   constructor(
     private fb: FormBuilder,         	// {3}
     //private authService: AuthService, // {4}
-    //private loginService: LoginService, 
+    private loginService: LoginService, 
     private router: Router
   ) { }
 
@@ -63,22 +63,39 @@ export class LoginComponent implements OnInit {
       this.loginbtn = 'Loading...';
       let loginData = this.form.value;
       if(loginData.marketId &&  this.marketIds.includes(loginData.marketId) && loginData.memberId =='111'){
-      	if(loginData.userId == 1 && loginData.password == 'admin123'){
-      		console.log("Logged In");
-      		localStorage.setItem('isLoggedIn', 'true');
-      		localStorage.setItem('userData', JSON.stringify(loginData));
-      		this.router.navigate(['/summary']);
-      	}else{      
-      		this.loginbtn = 'Login';
-      		localStorage.setItem('isLoggedIn', 'false');
-      		localStorage.setItem('userData', "");
-      		this.message = 'Invalid! username and password.';
-      	}
+        this.hideLoader = false;
+
+        this.loginService.userLogin({user_name: loginData.userId, password:loginData.password}).subscribe((data: any) => {
+          if(data.code == 200 && data.data.token){
+            localStorage.setItem('isLoggedIn', 'true');
+            localStorage.setItem('userData', JSON.stringify(data.data));
+            this.router.navigate(['/summary']);
+          }else{
+             this.loginbtn = 'Login';
+             localStorage.setItem('isLoggedIn', 'false');
+             localStorage.setItem('userData', "");
+             this.message =  data.error || data.msg;
+          }
+          this.hideLoader = true;
+
+        });
+      	// if(loginData.userId == 1 && loginData.password == 'admin123'){
+      	// 	console.log("Logged In");
+      	// 	localStorage.setItem('isLoggedIn', 'true');
+      	// 	localStorage.setItem('userData', JSON.stringify(loginData));
+      	// 	this.router.navigate(['/summary']);
+      	// }else{      
+      	// 	this.loginbtn = 'Login';
+      	// 	localStorage.setItem('isLoggedIn', 'false');
+      	// 	localStorage.setItem('userData', "");
+      	// 	this.message = 'Invalid! username and password.';
+      	// }
+        
       }else{
       		localStorage.setItem('isLoggedIn', 'false');
       		localStorage.setItem('userData', '');
       	    this.loginbtn = 'Login';
-      		this.message = 'Invalid! market/member id.';
+      		  this.message = 'Invalid! market/member id.';
       }
       // this.authService.login(this.form.value).subscribe((data: LoginResultModel) => {
       //   if (data.code == 202) {

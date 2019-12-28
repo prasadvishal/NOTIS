@@ -822,6 +822,7 @@ button.btn.btn-primary.btn-sm {margin-right: 5px;}
   width: 50%;
   max-height: 300px;
   max-width: 300px;
+  border-radius: 50%;
 }
 
 .primary-profile-info{

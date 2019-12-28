@@ -8,15 +8,17 @@ import { Component, OnInit } from '@angular/core';
 export class ProfileComponent implements OnInit {
 
   constructor() { }
-  username : 	String = "anand001";
-  firstname: 	String = "Anand";
-  lastname:  	String = "Modi";
-  empcode: 		String = "empc001";
-  user_occupation: 	String = "COO";
-  user_email: 		String = "anand001@wilsone.com";
-  user_phone: 		String = "+91 9876543210";
-  user_role: 		String = "admin";
-  last_login_at: 	Date = new Date(); 
+  userdata = JSON.parse(localStorage.getItem('userData'));
+  username : 	String = this.userdata.user_name;
+  firstname: 	String = this.userdata.first_name;
+  lastname:  	String = this.userdata.last_name ? this.userdata.last_name : "";
+  empcode: 		String = this.userdata.emp_code;
+  user_occupation: 	String = this.userdata.occupation;
+  user_email: 		String = this.userdata.email;
+  user_phone: 		String = this.userdata.phone;
+  user_role: 		String = this.userdata.role;
+  last_login_at: 	Date = this.userdata.last_login_at;
+  user_img_url : String = this.userdata.user_img_url;
   ngOnInit() {
   }
 

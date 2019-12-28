@@ -205,7 +205,8 @@ class NseUtils{
                 if(userinfo && userinfo.length){
                     let usertoken = await this.genrateToken();
                     await NseUsersModel.update({
-                        token: usertoken
+                        token: usertoken,
+                        last_login_at: moment().format()
                     },{
                         where:{
                             user_name: reqdata.body.user_name,
