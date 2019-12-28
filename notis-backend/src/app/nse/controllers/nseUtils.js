@@ -14,6 +14,8 @@ const Op = Sequelize.Op;
 class NseUtils{
     constructor(){
         this.utils = new Utils();
+        this.CommonController = new CommonController();
+        this.ResponseController = new ResponseController();
     }
 
     getNseData(trade_type){
@@ -183,12 +185,15 @@ class NseUtils{
     userLogin(reqdata){
         return new Promise(async (resolve, reject) => {
             try{
-                if(!reqdata || !reqdata.body){
-                    return ResponseController.badRequestErrorResponse(['request body'])
+                console.log("Reqdata.body ---> ",reqdata.body)
+                if(this.utils.isEmpty(reqdata) || this.utils.isEmpty(reqdata.body)){
+                    //console.log("Empty Data")
+                    return resolve(this.ResponseController.badRequestErrorResponse('req.body'))
                 }
-                let commoncheck = CommonController.commonCheck(reqdata, ['user_name', 'password'], 'body');
+                let commoncheck = this.CommonController.commonCheck(reqdata, ['user_name', 'password'], 'body');
+                console.log("Common Check ----> ",commoncheck);
                 if(commoncheck && commoncheck.length){
-                    return ResponseController.badRequestErrorResponse(commoncheck)
+                    return resolve(this.ResponseController.badRequestErrorResponse(commoncheck))
                 }
                 let userinfo = await NseUsersModel.findAll({ 
                     where:{
@@ -196,9 +201,12 @@ class NseUtils{
                         password: reqdata.body.password
                     }
                 })
-
                 console.log("User Data ----> ", userinfo)
-                return resolve(ResponseController.createSuccessResponse(userinfo));
+                if(userinfo && userinfo.length){
+                    return resolve(this.ResponseController.successResponse(userinfo));
+                }else{
+                    return resolve(this.ResponseController.noContentSucessResponse());
+                }
             } 
             catch(err){
                 console.log("Error Caught in userLogin() --------> ", err);

@@ -15,11 +15,12 @@ class NseResponse {
         return errResp;
     }
 
-    async badRequestErrorResponse(MissingParams = []) {
+    async badRequestErrorResponse(MissingParams) {
+    	console.log("inside badRequestErrorResponse ---> ",MissingParams,Constants.BAD_REQUEST_ERROR.CODE, Constants.BAD_REQUEST_ERROR.STATUS)
     	let errResp = {
     		'code' : Constants.BAD_REQUEST_ERROR.CODE,
     		'status': Constants.BAD_REQUEST_ERROR.STATUS,
-    		'error' : "Bad Request." + MissingParams.length ? ` Invalid Params: ${MissingParams.join()}` : ""
+    		'error' : "Bad Request." + MissingParams.length ? ` Invalid Params: ${MissingParams}` : ""
     	}
         return errResp;
     }
@@ -78,7 +79,7 @@ class NseResponse {
     		'msg' : "Success.",
     	}
     	if(data && data != {} && data != []){
-    		errResp['data']: data;
+    		errResp['data'] = data;
     	}
         return errResp;
     }
@@ -89,7 +90,7 @@ class NseResponse {
     		'msg' : "Successfully Created.",
     	}
     	if(data){
-    		errResp['data']: data;
+    		errResp['data'] = data;
     	}
         return errResp;
     }
@@ -100,7 +101,7 @@ class NseResponse {
     		'msg' : "Successfully Updated.",
     	}
     	if(data){
-    		errResp['data']: data;
+    		errResp['data'] = data;
     	}
         return errResp;
     }
@@ -111,7 +112,7 @@ class NseResponse {
     		'msg' : "No Data.",
     	}
     	if(data){
-    		errResp['data']: data;
+    		errResp['data'] = data;
     	}
         return errResp;
     }

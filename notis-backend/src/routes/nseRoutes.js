@@ -35,11 +35,14 @@ module.exports = function(app, router) {
     app.post('/login', async function(req, res){
         let NseUtils = require("../app/nse/controllers/nseUtils");
         let nseUtils = new NseUtils();
+        let nseResponse = new NseResponse();
         try{
-            res.send(await nseUtils.userLogin(req.body));
+            let resp = await nseUtils.userLogin(req)
+            console.log("Response Data ---> ",resp)
+            res.send(resp);
         }catch(err){
             console.error("Error in login process ----> ", err);
-            res.send(await NseResponse.serverErrorResponse());
+            res.send(await nseResponse.serverErrorResponse());
         }
 
     });    

@@ -39,7 +39,7 @@ app.listen(config.PORT, () => {
 let mysql_db = {
   database: "exchange",
   user: "root",
-  password: "root",
+  password: "Root_user@123",
   host: "localhost"
 }
 //------------MySQL Connection ------------//
