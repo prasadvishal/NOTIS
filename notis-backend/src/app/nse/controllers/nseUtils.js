@@ -1,8 +1,11 @@
 let request = require('request');
 let TokenController = require('./nseToken');
+let CommonController = require('./nseCommon');
+let ResponseController = require('./nseResponse');
 let Utils = require('../../../config/Utils.js');
 let NseResModel = require('../models/NseResModel');
 let NseDataModel = require('../models/NseDataModel');
+let NseUsersModel = require('../models/NseUsersModel');
 let NseApiLogModel = require('../models/NseApiLogModel');
 let moment = require('moment');
 let Sequelize = require('sequelize');
@@ -173,6 +176,34 @@ class NseUtils{
             let count = 100000000+todaysData;
             
             resolve(count);
+        })
+    }
+
+
+    userLogin(reqdata){
+        return new Promise(async (resolve, reject) => {
+            try{
+                if(!reqdata || !reqdata.body){
+                    return ResponseController.badRequestErrorResponse(['request body'])
+                }
+                let commoncheck = CommonController.commonCheck(reqdata, ['user_name', 'password'], 'body');
+                if(commoncheck && commoncheck.length){
+                    return ResponseController.badRequestErrorResponse(commoncheck)
+                }
+                let userinfo = await NseUsersModel.findAll({ 
+                    where:{
+                        user_name: reqdata.body.user_name,
+                        password: reqdata.body.password
+                    }
+                })
+
+                console.log("User Data ----> ", userinfo)
+                return resolve(ResponseController.createSuccessResponse(userinfo));
+            } 
+            catch(err){
+                console.log("Error Caught in userLogin() --------> ", err);
+                return reject(err)
+            }
         })
     }
 }
