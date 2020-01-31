@@ -69,6 +69,7 @@ export class LoginComponent implements OnInit {
           if(data.code == 200 && data.data.token){
             localStorage.setItem('isLoggedIn', 'true');
             localStorage.setItem('userData', JSON.stringify(data.data));
+            localStorage.setItem('marketType', loginData.marketId);
             this.router.navigate(['/summary']);
           }else{
              this.loginbtn = 'Login';
