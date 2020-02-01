@@ -912,3 +912,13 @@ button.btn.btn-primary.btn-sm {margin-right: 5px;}
   font-size: 25pt;
   margin-bottom: 2%;
 }
+
+.scroll-x {
+  overflow-x: scroll;
+  max-width: 100%;
+}
+
+.scroll-y {
+  overflow-y: scroll;
+  max-height: 40%;
+}

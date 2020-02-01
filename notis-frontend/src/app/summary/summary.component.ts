@@ -323,7 +323,7 @@ export class SummaryComponent implements OnInit {
       this.marketType = localStorage.getItem('marketType');
       this.hideLoader = false;
 
-      this.summaryService.getTradeData({marketType: this.marketType}).subscribe((data: any) => {
+      this.summaryService.getTradeData({marketType: this.marketType, token: localStorage.getItem('token')}).subscribe((data: any) => {
         console.log("getTradeData Response ----------> ",data);
         if(data.code == 200 && data.data.length){
           this.tradeDataList = [];

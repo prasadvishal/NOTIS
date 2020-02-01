@@ -7,35 +7,6 @@ let router = express.Router();
 
 global.C = require('./config/Constants');
 
-
-
-app.listen(config.PORT, () => {
-    var apiRoute = require('./routes/nseRoutes') (app, router);
-    global.DBConnection = null;
-    // createDbConnection();
-    console.log('Notis Server server listening on port ' + config.PORT);
-});
-
-// function createDbConnection(){
-// 	var con = mysql.createConnection({
-//           //host: "10.201.0.11",
-//           host: "localhost",
-//           user: "root",
-//           password: "root",
-//           database: "exchange"
-//         });
-
-//         con.connect(function(err) {
-//           if (err) {
-//             console.log("Connection Error ------> ",err)
-//             throw err; 
-//           }else{
-//             console.log("Db Connected.")
-//             global.DBConnection = con;
-//           }
-//         });
-// }
-
 let mysql_db = {
   database: "exchange",
   user: "root",
@@ -63,4 +34,32 @@ sequelize.authenticate().then(() => {
     console.error('Unable to connect to the database ' + mysql_db.database + ' :', err);
     global.DBConnection = null;
 });
+
+app.listen(config.PORT, () => {
+    global.DBConnection = null;
+    var apiRoute = require('./routes/nseRoutes') (app, router);
+    // createDbConnection();
+    console.log('Notis Server server listening on port ' + config.PORT);
+});
+
+// function createDbConnection(){
+// 	var con = mysql.createConnection({
+//           //host: "10.201.0.11",
+//           host: "localhost",
+//           user: "root",
+//           password: "root",
+//           database: "exchange"
+//         });
+
+//         con.connect(function(err) {
+//           if (err) {
+//             console.log("Connection Error ------> ",err)
+//             throw err; 
+//           }else{
+//             console.log("Db Connected.")
+//             global.DBConnection = con;
+//           }
+//         });
+// }
+
 //------------MySQL Connection ------------//

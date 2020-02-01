@@ -68,6 +68,7 @@ export class LoginComponent implements OnInit {
         this.loginService.userLogin({user_name: loginData.userId, password:loginData.password}).subscribe((data: any) => {
           if(data.code == 200 && data.data.token){
             localStorage.setItem('isLoggedIn', 'true');
+            localStorage.setItem('token', data.data.token);
             localStorage.setItem('userData', JSON.stringify(data.data));
             localStorage.setItem('marketType', loginData.marketId);
             this.router.navigate(['/summary']);

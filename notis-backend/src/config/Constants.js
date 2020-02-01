@@ -6,10 +6,10 @@ module.exports =  {
     tokenData:{},
     MEMBER_CODE: "12345",
     DATA_API_URL: "http://10.10.11.214:3002",
-    'notis_cm':{
+    'CM':{
         name: 'notis_cm',
         url:'/notis-cm/trades-inquiry',
-        table: 'snotis_cm'
+        table: 'notis_cm_1.3'
     },
 
     SERVER_ERROR:{
