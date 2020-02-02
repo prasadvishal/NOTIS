@@ -1,14 +1,14 @@
 
 let Sequelize = require('sequelize');
 
-let nseDataModel = DBConnection.define('nse_data', {
+let nseDataModel = DBConnection.define('notis_cd_actions', {
     id: { type: Sequelize.INTEGER, autoIncrement: true, primaryKey: true},
-    tradeType: { type: Sequelize.STRING, allowNull: false },
-    errCd: { type: Sequelize.STRING, allowNull: false },
-    seqNo: { type: Sequelize.STRING, allowNull: false },
-    actTrdNo: { type: Sequelize.STRING, allowNull: false},
-    actDtTm: { type: Sequelize.STRING, allowNull: false },
-    actId: { type: Sequelize.STRING, allowNull: false },
+    errCd: { type: Sequelize.INTEGER, allowNull: true },
+    seqNo: { type: Sequelize.INTEGER, allowNull: true },
+    actTrdNo: { type: Sequelize.INTEGER, allowNull: true },
+    actDtTm: { type: Sequelize.INTEGER, allowNull: true },
+    actId: { type: Sequelize.INTEGER, allowNull: true },
+   
     nseMainDataId: {
         type: Sequelize.INTEGER,
         references: {
