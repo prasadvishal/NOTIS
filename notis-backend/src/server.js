@@ -27,16 +27,16 @@ var sequelize = new Sequelize(mysql_db.database, mysql_db.user, mysql_db.passwor
   }
 });
 
-sequelize.authenticate().then(() => {
-    console.log('Connected to MySQL ' + mysql_db.database + ' database.');
-    global.DBConnection = sequelize;
-}).catch(err => {
-    console.error('Unable to connect to the database ' + mysql_db.database + ' :', err);
-    global.DBConnection = null;
-});
 
 app.listen(config.PORT, () => {
     global.DBConnection = null;
+    sequelize.authenticate().then(() => {
+        console.log('Connected to MySQL ' + mysql_db.database + ' database.');
+        global.DBConnection = sequelize;
+    }).catch(err => {
+        console.error('Unable to connect to the database ' + mysql_db.database + ' :', err);
+        global.DBConnection = null;
+    });
     var apiRoute = require('./routes/nseRoutes') (app, router);
     // createDbConnection();
     console.log('Notis Server server listening on port ' + config.PORT);
