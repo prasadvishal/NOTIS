@@ -11,6 +11,18 @@ module.exports =  {
         url:'/notis-cm/trades-inquiry',
         table: 'notis_cm_1.3'
     },
+    'CD':{
+        name: 'notis_cd',
+        url:'/notis-cd/trades-inquiry',
+        table: 'notis_cd'
+    },
+    'FO':{
+        name: 'notis_fo',
+        url:'/api/inquiry-fo/trades-inquiry',
+        table: 'notis_fo'
+    },
+
+    allowedTradeType: ['CM', 'CD', 'FO'],
 
     SERVER_ERROR:{
         CODE: 500,

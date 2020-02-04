@@ -25,6 +25,16 @@ class NseToken {
         //TODO log in db
         return new Promise((resolve, reject) =>{ 
             let that = this;
+            let bodyData = {
+                url: C.NSE_HOST+'/token',
+                headers: {
+                    'Authorization': 'Basic MDZiZTczNGVjYWYzNGQ3MDgxZTE5YWI1Zjk0OTBiZGM6ODI2MDMxM2FmMTYzNDFiNGJjOWI4N2JkNGQ2YWVjMmE=',
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'nonce': that.utils.getNOnce()
+                },
+                body: {'grant_type': C.CLIENT_CRENDENTIALS},
+            }
+            
             try {
                 request({
                     url: C.NSE_HOST+'/token',
