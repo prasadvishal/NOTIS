@@ -1,10 +1,10 @@
 let NseToken = require("../app/nse/controllers/nseToken");
 let NseResponse = require("../app/nse/controllers/nseResponse");
 let nseToken = new NseToken();
-
+let Middleware = require('../app/middleware/middleware')
 
 module.exports = function(app, router) {
-
+    let middleware = new Middleware();
     app.get('/health', (req, res) => {
         res.status(200).send({
             data: 'OK'
@@ -38,6 +38,22 @@ module.exports = function(app, router) {
         let nseResponse = new NseResponse();
         try{
             let resp = await nseUtils.userLogin(req)
+            console.log("Response Data ---> ",resp)
+            res.send(resp);
+        }catch(err){
+            console.error("Error in login process ----> ", err);
+            res.send(await nseResponse.serverErrorResponse());
+        }
+
+    });
+
+    //getTradeData api route
+    app.post('/getTradeData', middleware.authReq, async function(req, res){
+        let TradeSummary = require("../app/summary/controllers/summary");
+        let tradeSummary = new TradeSummary();
+        let nseResponse = new NseResponse();
+        try{
+            let resp = await tradeSummary.getTradeData(req)
             console.log("Response Data ---> ",resp)
             res.send(resp);
         }catch(err){

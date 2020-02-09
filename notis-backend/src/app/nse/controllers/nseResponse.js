@@ -32,11 +32,11 @@ class NseResponse {
     	}
         return errResp;
     }
-    async unauthorisesdErrorResponse() {
+    async unauthorisesdErrorResponse(data='') {
     	let errResp = {
     		'code' : Constants.UNAUTHORISED_ERROR.CODE,
     		'status': Constants.UNAUTHORISED_ERROR.STATUS,
-    		'error' : "Missing/Invalid Token."
+    		'error' : data && typeof data == 'string' ? `${data}` : "Missing/Invalid Token."  
     	}
         return errResp;
     }

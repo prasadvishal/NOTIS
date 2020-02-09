@@ -3,6 +3,8 @@ let Sequelize = require('sequelize');
 
 let nseDataModel = DBConnection.define('notis_cm_1.3', {
     id: { type: Sequelize.INTEGER, autoIncrement: true, primaryKey: true},
+    // tradeType: { type: Sequelize.STRING, allowNull: false },
+    // errCd: { type: Sequelize.STRING, allowNull: false },
     seqNo: { type: Sequelize.BIGINT, allowNull: false },
     mkt: { type: Sequelize.STRING, allowNull: true },
     trdNo: { type: Sequelize.BIGINT, allowNull: true },

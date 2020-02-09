@@ -97,7 +97,6 @@ class NseUtils{
         return new Promise(async (resolve, reject) =>{
             let controlHeaders = (nseData.data.tradesInquiry.split('^')[0]).split(',');
             console.log(`
-
                 Control Headers -------> ${controlHeaders[0]} ${typeof controlHeaders}\n\n`)
             let obj = {
                 tradeType: tradeData.name,
@@ -574,4 +573,3 @@ class NseUtils{
 
 
 module.exports = NseUtils;
-

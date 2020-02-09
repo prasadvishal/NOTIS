@@ -63,59 +63,63 @@
            
         	</div>
           
-        <div  *ngIf="tradeDataList?.length > 0 else noData">
+        <div  *ngIf="tradeDataList?.length > 0 else noData" class="scroll-x scroll-y">
             <!-- class="table-overflow  fix-height" -->
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th style="text-align: center;">Trade Date<span class="fa fa-calendar" aria-hidden="true"></span></th>
-                        <th style="text-align: center;">Market<span class="fa fa-shopping-bag" aria-hidden="true"></span></th>
-                        <th style="text-align: center;">Trade No<span class="fa fa-sort"></span></th>
-                        <th style="text-align: center;">Trade Time<span class="fa fa-clock-o" aria-hidden="true"></span></th> 
-                        <th style="text-align: center;">Symbol<span class="fa fa-sort"></span></th>
-                        <th style="text-align: center;">Series<span class="fa fa-sort"></span></th>
-                        <th style="text-align: center;">Quantity</th>
-                        <th style="text-align: center;">Price</th>
-                        <th style="text-align: center;">Trade Value</th>
-                        <th style="text-align: center;">Buy/Sell</th>
-                        <th style="text-align: center;">Order No</th>
-                        <th style="text-align: center;">Branch No</th>
-                        <th style="text-align: center;">User Id</th>
-                        <th style="text-align: center;">Client Type</th>
-                        <th style="text-align: center;">Client A/C</th>
-                        <th style="text-align: center;">CP Code</th>
-                        <th style="text-align: center;">Remarks</th>
-                        <th style="text-align: center;">CTO Id</th>
+            <div style="width:150%; height: 60%">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th style="text-align: center; " *ngFor="let key of headers"> {{key}} </th>
+     <!--                        <th style="text-align: center;">Market<span class="fa fa-shopping-bag" aria-hidden="true"></span></th>
+                            <th style="text-align: center;">Trade No<span class="fa fa-sort"></span></th>
+                            <th style="text-align: center;">Trade Time<span class="fa fa-clock-o" aria-hidden="true"></span></th> 
+                            <th style="text-align: center; ">Symbol<span class="fa fa-sort"></span></th>
+                            <th style="text-align: center; ">Series<span class="fa fa-sort"></span></th>
+                            <th style="text-align: center; ">Quantity</th>
+                            <th style="text-align: center; ">Price</th>
+                            <th style="text-align: center; ">Trade Value</th>
+                            <th style="text-align: center; ">Buy/Sell</th>
+                            <th style="text-align: center; ">Order No</th>
+                            <th style="text-align: center; ">Branch No</th>
+                            <th style="text-align: center; ">User Id</th>
+                            <th style="text-align: center; ">Client Type</th>
+                            <th style="text-align: center; ">Client A/C</th>
+                            <th style="text-align: center; ">CP Code</th>
+                            <th style="text-align: center; ">Remarks</th>
+                            <th style="text-align: center; ">CTO Id</th> -->
 
-                        <!-- <th style="text-align: center;">Action</th> -->
+                            <!-- <th style="text-align: center;">Action</th> -->
 
-                        <!-- <th>Edit</th> -->
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr *ngFor='let tradeData of tradeDataList'>
-                        <td>{{tradeData.trade_date? tradeData.trade_date: 'DD-MMM-YYYY'}}</td>
-                        <td>{{tradeData.market ? tradeData.market :'--'}}</td>
-                        <td>{{tradeData.trade_no? tradeData.trade_no: '--'}}</td>
-                        <td>{{tradeData.trade_no? tradeData.trade_time: 'HH:mm:ss'}}</td>
-                        <td style="text-align: center;width: 200px">>{{tradeData.symbol}}</td>
-                        <td style="text-align: center;width: 200px">{{tradeData.series}}</td>
-                        <!-- <td>{{ad.adlength}}</td> -->
-                         <td style="text-align: center;width: 200px">{{tradeData.quantity}}</td>
-                         <td style="text-align: center;width: 200px">{{tradeData.price}}</td>
-                         <td style="text-align: center;width: 200px">{{tradeData.trade_value}}</td>
-                         <td style="text-align: center;width: 200px">{{tradeData.buy_sell}}</td>
-                         <td style="text-align: center;width: 200px">{{tradeData.order_no}}</td>
-                         <td style="text-align: center;width: 200px">{{tradeData.branch_no}}</td>
-                         <td style="text-align: center;width: 200px">{{tradeData.user_id}}</td>
-                         <td style="text-align: center;width: 200px">{{tradeData.client_type}}</td>
-                         <td style="text-align: center;width: 200px">{{tradeData.client_ac}}</td>
-                         <td style="text-align: center;width: 200px">{{tradeData.cp_code}}</td>
-                         <td style="text-align: center;width: 200px">{{tradeData.remarks}}</td>
-                         <td style="text-align: center;width: 200px">{{tradeData.cto_id}}</td>
-                   </tr>
-                </tbody>
-            </table>
+                            <!-- <th>Edit</th> -->
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor='let tradeData of tradeDataList'>
+                            <td style="text-align: center;" *ngFor='let tradeInfo of tradeData'>{{tradeInfo}}</td>
+                           <!--  <td>{{tradeData.id? tradeData.id: 'DD-MMM-YYYY'}}</td>
+                            <td>{{tradeData.seqNo ? tradeData.seqNo :'--'}}</td>
+                            <td>{{tradeData.trade_no? tradeData.trade_no: '--'}}</td>
+                            <td>{{tradeData.trade_no? tradeData.trade_time: 'HH:mm:ss'}}</td>
+                            <td style="text-align: center;">>{{tradeData.symbol}}</td>
+                            <td style="text-align: center;">{{tradeData.series}}</td> 
+                            
+                            <td style="text-align: center;">{{tradeData.quantity}}</td>
+                             <td style="text-align: center;">{{tradeData.price}}</td>
+                             <td style="text-align: center;">{{tradeData.trade_value}}</td>
+                             <td style="text-align: center;">{{tradeData.buy_sell}}</td>
+                             <td style="text-align: center;">{{tradeData.order_no}}</td>
+                             <td style="text-align: center;">{{tradeData.branch_no}}</td>
+                             <td style="text-align: center;">{{tradeData.user_id}}</td>
+                             <td style="text-align: center;">{{tradeData.client_type}}</td>
+                             <td style="text-align: center;">{{tradeData.client_ac}}</td>
+                             <td style="text-align: center;">{{tradeData.cp_code}}</td>
+                             <td style="text-align: center;">{{tradeData.remarks}}</td>
+                             <td style="text-align: center;">{{tradeData.cto_id}}</td> -->
+                       </tr>
+                    </tbody>
+                </table>
+            </div>
+
         </div>
 
    	</div>

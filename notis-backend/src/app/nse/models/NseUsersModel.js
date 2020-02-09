@@ -10,6 +10,7 @@ let nseDataModel = DBConnection.define('nse_users', {
     phone: { type: Sequelize.INTEGER, allowNull: true },
     role: { type: Sequelize.STRING, allowNull: false },
     token: { type: Sequelize.STRING, allowNull: true },
+    token_ttl: { type: Sequelize.DATE, allowNull: false },
     occupation: { type: Sequelize.STRING, allowNull: true },
     emp_code: { type: Sequelize.STRING, allowNull: true },
     user_img_url: { type: Sequelize.STRING, allowNull: true },
