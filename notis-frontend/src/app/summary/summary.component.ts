@@ -3,6 +3,7 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import * as $ from 'jquery';
 import { SummaryService } from '../services/summary/summary.service';
+import { Constants } from '../app.constants';
 
 
 @Component({
@@ -13,14 +14,14 @@ import { SummaryService } from '../services/summary/summary.service';
 export class SummaryComponent implements OnInit {
 	public form: FormGroup;
 	public filterform : FormGroup;
-	totalBuyValue : Number = 101083731;
-	totalSellValue: Number = 528195326;
-	totalTradeValue:Number = 762515373;
-	totalTrade: Number = 62628191736; 
+	totalBuyValue : Number = 0;
+	totalSellValue: Number = 0;
+	totalTradeValue:Number = 0;
+	totalTrade: Number = 0; 
 	tradeDataList : Array<any> = [];
-	marketIds: Array<string> = ['CM', 'FO', 'CD', 'DT', 'SLB' , 'CO'];
+	marketIds: Array<any> = Constants.MARKET_IDS.filter(x => x.market_type == localStorage.getItem('marketType'));
 	symbols: Array<string> = ['symbol1', 'symbol2', 'symbol3', 'symbol4'];
-  series: Array<string> = ['Series1', 'Series2','Series3','Series4'];
+    series: Array<string> = ['Series1', 'Series2','Series3','Series4'];
 	headers: Array<string> = [];
   marketType : string;
   hideLoader: boolean = true ;
@@ -325,10 +326,15 @@ export class SummaryComponent implements OnInit {
 	  console.log("getTradeData() TOKEN -------> ",localStorage.getItem('token'))
       this.summaryService.getTradeData({marketType: this.marketType, token: localStorage.getItem('token')}).subscribe((data: any) => {
         console.log("getTradeData Response ----------> ",data);
-        if(data.code == 200 && data.data.length){
+        if(data.code == 200 && data.data && data.data.TradeData && data.data.TradeData.length){
           this.tradeDataList = [];
-          let tradeDataListRes = data.data;
-          this.headers = Object.keys(data.data[0])
+          let tradeDataListRes = data.data.TradeData;
+          this.headers = Object.keys(data.data.TradeData[0]);
+          this.totalBuyValue = data.data.TotalBuy;
+          this.totalSellValue = data.data.TotalSell;
+          this.totalTradeValue = data.data.TotalTradeValue;
+          this.totalTrade = data.data.TotalTrade;
+
           for(let trade of tradeDataListRes){
             this.tradeDataList.push(Object.values(trade))
           }

@@ -159,7 +159,7 @@
                     	    <label for="marketTypeFilter">Market Type:</label>
 		    		  		<select class="form-control" formControlName="marketTypeFilter" id="marketTypeFilter" name="marketTypeFilter" >
                     	      <option disabled value="" selected>Select Market</option>
-                    	      <option *ngFor="let mid of marketIds">{{mid}}</option>
+                    	      <option *ngFor="let mid of marketIds">{{mid.transcode_name}}</option>
                     	    </select>
                     	</div>
 

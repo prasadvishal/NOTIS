@@ -401,7 +401,8 @@ class NseUtils{
                     let usertoken = await this.genrateToken();
                     await NseUsersModel.update({
                         token: usertoken,
-                        last_login_at: moment().format()
+                        last_login_at: moment().format(),
+                        token_ttl: moment().add(1, 'hours').format('YYYY-MM-DD HH:mm:ss')
                     },{
                         where:{
                             user_name: reqdata.body.user_name,

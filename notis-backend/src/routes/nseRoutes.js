@@ -38,7 +38,7 @@ module.exports = function(app, router) {
         let nseResponse = new NseResponse();
         try{
             let resp = await nseUtils.userLogin(req)
-            console.log("Response Data ---> ",resp)
+            //console.log("Response Data ---> ",resp)
             res.send(resp);
         }catch(err){
             console.error("Error in login process ----> ", err);
@@ -54,7 +54,7 @@ module.exports = function(app, router) {
         let nseResponse = new NseResponse();
         try{
             let resp = await tradeSummary.getTradeData(req)
-            console.log("Response Data ---> ",resp)
+            //console.log("Response Data ---> ",resp)
             res.send(resp);
         }catch(err){
             console.error("Error in login process ----> ", err);
@@ -62,4 +62,20 @@ module.exports = function(app, router) {
         }
 
     });    
+
+        //getFiltersMetadata api route
+    app.post('/metadata', middleware.authReq, async function(req, res){
+        let TradeSummary = require("../app/summary/controllers/summary");
+        let tradeSummary = new TradeSummary();
+        let nseResponse = new NseResponse();
+        try{
+            let resp = await tradeSummary.getFiltersMetaData(req)
+            //console.log("Response Data ---> ",resp)
+            res.send(resp);
+        }catch(err){
+            console.error("Error in login process ----> ", err);
+            res.send(await nseResponse.serverErrorResponse());
+        }
+
+    });  
 }
