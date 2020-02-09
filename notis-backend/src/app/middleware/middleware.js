@@ -40,9 +40,11 @@ class NseMiddleware {
 	    userinfo = userinfo[0];
 	    console.log("User Info In Middleware ----> ", userinfo, new Date(userinfo.token_ttl))
 	    let prevTtl = (userinfo.token_ttl && new Date(userinfo.token_ttl) != 'Invalid Date') ? new Date(userinfo.token_ttl) : null;
-	    console.log("Token Valid ? ",prevTtl <= new Date(), prevTtl, new Date(), " | after adding 15min ---> ",moment(prevTtl).add(15, 'minutes').format('YYYY-MM-DD HH:mm:ss'))
+	    console.log("Token Valid ? ",prevTtl > new Date(), prevTtl, new Date(), " | after adding 15min ---> ",moment(prevTtl).add(15, 'minutes').format('YYYY-MM-DD HH:mm:ss'))
 	    if(!prevTtl || prevTtl <= new Date()){
-	    	 res.send(that.ResponseController.unauthorisesdErrorResponse('Token Expired.'));	// token ttl dosent exist
+	    	console.log("!!!!!!! Token Expired !!!!!!")
+	    	return res.send({code:401,error:"Token Expired", status:"Unauthorized"});	// token ttl dosent exist
+	    	// res.send(that.ResponseController.unauthorisesdErrorResponse('Token Expired.'));	// token ttl dosent exist
 	    }
 	    req['user'] = {
 	    	'id': userinfo.id,

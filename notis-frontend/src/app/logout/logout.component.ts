@@ -16,6 +16,7 @@ export class LogoutComponent implements OnInit {
   	localStorage.setItem('isLoggedIn', 'false');
     localStorage.setItem('userData', '');
     localStorage.setItem('marketType', '');
+    localStorage.setItem('token', '');
   	this.router.navigate(['/login']);
   }
 

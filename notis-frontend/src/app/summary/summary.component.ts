@@ -322,7 +322,7 @@ export class SummaryComponent implements OnInit {
     getTradeData(){
       this.marketType = localStorage.getItem('marketType');
       this.hideLoader = false;
-
+	  console.log("getTradeData() TOKEN -------> ",localStorage.getItem('token'))
       this.summaryService.getTradeData({marketType: this.marketType, token: localStorage.getItem('token')}).subscribe((data: any) => {
         console.log("getTradeData Response ----------> ",data);
         if(data.code == 200 && data.data.length){
@@ -332,7 +332,16 @@ export class SummaryComponent implements OnInit {
           for(let trade of tradeDataListRes){
             this.tradeDataList.push(Object.values(trade))
           }
-        }else{
+        }else if(data.code == 401){
+            alert("Session Expired. Login Again.");
+            console.log("Session Expired. Login Again.")
+            localStorage.setItem('isLoggedIn', 'false');
+            localStorage.setItem('userData', '');
+            localStorage.setItem('marketType', '');
+            localStorage.setItem('token', '');
+            this.router.navigate(['/login']);
+        }
+        else{
           console.log("Error / No Data");
         }
         this.hideLoader = true;

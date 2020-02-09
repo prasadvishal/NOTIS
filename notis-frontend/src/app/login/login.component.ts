@@ -71,6 +71,8 @@ export class LoginComponent implements OnInit {
             localStorage.setItem('token', data.data.token);
             localStorage.setItem('userData', JSON.stringify(data.data));
             localStorage.setItem('marketType', loginData.marketId);
+	          console.log("login() TOKEN -------> ",localStorage.getItem('token'))
+
             this.router.navigate(['/summary']);
           }else{
              this.loginbtn = 'Login';
