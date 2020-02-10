@@ -18,7 +18,7 @@ module.exports =  {
     },
     'FO':{
         name: 'notis_fo',
-        url:'/inquiry-fo/trades-inquiry',
+        url:'/api/inquiry-fo/trades-inquiry',
         table: 'notis_fo'
     },
 
