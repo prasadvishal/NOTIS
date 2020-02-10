@@ -8,6 +8,6 @@ var Credentials ={
 	user: "root",
 	password: "Wilson@1234",
 	db_password: "Root_user@123"
-
+//ps -fA | grep python
 }
 

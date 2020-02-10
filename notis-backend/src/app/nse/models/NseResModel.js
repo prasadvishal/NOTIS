@@ -7,7 +7,7 @@ let nseDataModel = DBConnection.define('nse_data_resp', {
     status: { type: Sequelize.STRING, allowNull: false },
     messageCode: { type: Sequelize.STRING, allowNull: false },
     dataAvailable: { type: Sequelize.BOOLEAN, allowNull: true, defaultValue: null},
-    mktSts: { type: Sequelize.INTEGER, allowNull: false },
+    mktSts: { type: Sequelize.INTEGER, allowNull: true },
     currTrdDate: { type: Sequelize.INTEGER, allowNull: true },
     sfill1: { type: Sequelize.STRING, allowNull: true },
     sfill2: { type: Sequelize.STRING, allowNull: true },
