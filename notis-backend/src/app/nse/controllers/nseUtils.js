@@ -10,6 +10,11 @@ let NseCD = require('../models/NseCD');
 let NseFO = require('../models/NseFO');
 let NseUsersModel = require('../models/NseUsersModel');
 let NseApiLogModel = require('../models/NseApiLogModel');
+let SeriesFilterModel = require('../models/SeriesFilterModel');
+let SymbolFilterModel = require('../models/SymbolFilterModel');
+let UserIdFilterModel = require('../models/UserIdFilterModel');
+let CliAccountFilterModel = require('../models/CliAccountFilterModel');
+let BranchFilterModel = require('../models/BranchFilterModel');
 let moment = require('moment');
 let Sequelize = require('sequelize');
 const Op = Sequelize.Op;
@@ -112,6 +117,7 @@ class NseUtils{
             console.log(obj);
             try{
                 let nseRes = await NseResModel.create(obj);
+                console.log("nseData.data.tradesInquiry.split('^').lengt", nseData.data.tradesInquiry.split('^').length)
                 if(nseData.status == 'success' && !this.utils.isEmpty(nseData.data.tradesInquiry) && nseData.data.tradesInquiry.split('^').length > 2){
                     if(!(this.utils.isEmpty(nseData)) &&!(this.utils.isEmpty(nseData.data))){
                         switch(tradeData.name){
@@ -400,6 +406,8 @@ class NseUtils{
                 console.log("User Data ----> ", userinfo)
                 if(userinfo && userinfo.length){
                     let usertoken = await this.genrateToken();
+                    console.log(" Current Time --> ", moment().format())
+                    console.log(" Current + 1 hour Time --> ",moment().add(1, 'hours').format('YYYY-MM-DD HH:mm:ss'))
                     await NseUsersModel.update({
                         token: usertoken,
                         last_login_at: moment().format(),
@@ -587,6 +595,54 @@ class NseUtils{
         }
     }
 
+    getFiltersMetadata(reqdata){
+        return new Promise(async (resolve, reject) => {
+            try{
+                console.log("Reqdata.body ---> ",reqdata)
+                if(this.utils.isEmpty(reqdata) || this.utils.isEmpty(reqdata.marketType)){
+                    //console.log("Empty Data")
+                    return resolve(this.ResponseController.badRequestErrorResponse('marketType'))
+                }
+                
+                let symbolinfo = await SymbolFilterModel.findAll({
+                    attributes: ['symbol'], 
+                    where:{
+                        market_type: reqdata.marketType
+                    }
+                })
+                let seriesinfo = await SeriesFilterModel.findAll({ 
+                    attributes: ['series'], 
+                    where:{
+                        market_type: reqdata.marketType
+                    }
+                })
+                let userinfo = await UserIdFilterModel.findAll({ 
+                    attributes: ['user_id'], 
+                    where:{
+                        market_type: reqdata.marketType
+                    }
+                })
+                let branchinfo = await BranchFilterModel.findAll({ 
+                    attributes: ['branch'], 
+                    where:{
+                        market_type: reqdata.marketType
+                    }
+                })
+                let cliAccountinfo = await CliAccountFilterModel.findAll({ 
+                    attributes: ['cli_act_no'], 
+                    where:{
+                        market_type: reqdata.marketType
+                    }
+                })
+                console.log("User Data ----> ", userinfo)
+                return resolve(this.ResponseController.successResponse({'symbols': symbolinfo, 'series': seriesinfo, 'userinfo': userinfo, 'branches': branchinfo, 'cliAccounts': cliAccountinfo}));
+            } 
+            catch(err){
+                console.log("Error Caught in userLogin() --------> ", err);
+                return reject(err)
+            }
+        })
+    }
 }
 
 

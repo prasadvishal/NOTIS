@@ -185,7 +185,7 @@
                     	    <label for="marketTypeFilter">Branch ID:</label>
                     	    <select class="form-control" formControlName="branchIdFilter" id="branchIdFilter" name="branchIdFilter" >
                     	      <option disabled value="" selected>Select Branch</option>
-                    	      <option *ngFor="let mid of marketIds">{{mid}}</option>
+                    	      <option *ngFor="let mid of branches">{{mid}}</option>
                     	    </select>
                     	</div>
 
@@ -193,7 +193,7 @@
                     	    <label for="userFilter">User ID:</label>
                     	    <select class="form-control" formControlName="userFilter" id="userFilter" name="userFilter" >
                     	      <option disabled value="" selected>Select User</option>
-                    	      <option *ngFor="let mid of symbols">{{mid}}</option>
+                    	      <option *ngFor="let uid of userIds">{{uid}}</option>
                     	    </select>
                     	</div>
 
@@ -201,7 +201,7 @@
                     	    <label for="cliAccountFilter">CLI Account No:</label>
                     	    <select class="form-control" formControlName="cliAccountFilter" id="cliAccountFilter" name="cliAccountFilter" >
                     	      <option disabled value="" selected>Select Cli Account</option>
-                    	      <option *ngFor="let mid of series">{{mid}}</option>
+                    	      <option *ngFor="let mid of cliAccounts">{{mid}}</option>
                     	    </select>
                     	</div>
 					</div>

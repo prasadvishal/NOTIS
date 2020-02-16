@@ -22,9 +22,12 @@ export class SummaryComponent implements OnInit {
 	marketIds: Array<any> = Constants.MARKET_IDS.filter(x => x.market_type == localStorage.getItem('marketType'));
 	symbols: Array<string> = ['symbol1', 'symbol2', 'symbol3', 'symbol4'];
     series: Array<string> = ['Series1', 'Series2','Series3','Series4'];
-	headers: Array<string> = [];
-  marketType : string;
-  hideLoader: boolean = true ;
+    headers: Array<string> = [];
+    userIds: Array<string> = [];
+    cliAccounts: Array<string> = [];
+	branches: Array<string> = [];
+    marketType : string;
+    hideLoader: boolean = true ;
 
   	constructor( 
   		private fb: FormBuilder,
@@ -77,15 +80,16 @@ export class SummaryComponent implements OnInit {
 		  	});
 		  	//this.genrateData();
         this.getTradeData();
-		  	console.log("Trade Data List ---> ",this.tradeDataList)
-  		}
+        this.getFiltersMetadata();
+        console.log("Trade Filters List ---> ",this.symbols, this.series, this.userIds)
+		console.log("Trade Data List ---> ",this.tradeDataList)
+        }
+  	};
 
-  	}
-
-  	showTransactionBackupModal(){
+  	showTransactionBackupModal() {
   		console.log("Inside showTransactionBackupModal()");
   		$("#transaction-backup-modal").show();
-  	}
+  	};
 
 
   	genrateData(){
@@ -318,7 +322,7 @@ export class SummaryComponent implements OnInit {
     		'remarks':null,
     		'cto_id':234567809
     	}]
-    }
+    };
 
     getTradeData(){
       this.marketType = localStorage.getItem('marketType');
@@ -353,6 +357,36 @@ export class SummaryComponent implements OnInit {
         this.hideLoader = true;
 
       })
-    }    
+    } ; 
+
+    getFiltersMetadata(){
+      this.marketType = localStorage.getItem('marketType');
+      this.hideLoader = false;
+      console.log("getFiltersMetadata() TOKEN -------> ",localStorage.getItem('token'))
+      this.summaryService.getFiltersMetadata({marketType: this.marketType, token: localStorage.getItem('token')}).subscribe((data: any) => {
+        console.log("getFiltersMetadata Response ----------> ",data);
+        if(data.code == 200 && data.data){
+          this.symbols = data.data.symbols.map(x => (x.symbol));
+          this.series = data.data.series.map(x => (x.series));
+          this.userIds = data.data.userinfo.map(x => (x.user_id));
+          this.branches = data.data.branches.map(x => (x.branch));
+          this.cliAccounts = data.data.cliAccounts.map(x => (x.cli_act_no));
+        }else if(data.code == 401){
+            alert("Session Expired. Login Again.");
+            console.log("Session Expired. Login Again.")
+            localStorage.setItem('isLoggedIn', 'false');
+            localStorage.setItem('userData', '');
+            localStorage.setItem('marketType', '');
+            localStorage.setItem('token', '');
+            this.router.navigate(['/login']);
+        }
+        else{
+          console.log("Error / No Data");
+        }
+        this.hideLoader = true;
+
+      })
+    } ;   
+  
 
 }

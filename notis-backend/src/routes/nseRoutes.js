@@ -63,13 +63,13 @@ module.exports = function(app, router) {
 
     });    
 
-        //getFiltersMetadata api route
-    app.post('/metadata', middleware.authReq, async function(req, res){
-        let TradeSummary = require("../app/summary/controllers/summary");
-        let tradeSummary = new TradeSummary();
+    //getFiltersMetadata api route
+    app.get('/filters/metadata', middleware.authReq, async function(req, res){
+        let NseUtils = require("../app/nse/controllers/nseUtils");
+        let nseUtils = new NseUtils();
         let nseResponse = new NseResponse();
         try{
-            let resp = await tradeSummary.getFiltersMetaData(req)
+            let resp = await nseUtils.getFiltersMetadata(req.query)
             //console.log("Response Data ---> ",resp)
             res.send(resp);
         }catch(err){

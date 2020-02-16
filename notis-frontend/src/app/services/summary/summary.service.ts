@@ -19,4 +19,7 @@ export class SummaryService {
   	getTradeData(requestObj) {
     	return this.http.post(`${this.API_URL}getTradeData`, requestObj);
   	}
+  	getFiltersMetadata(requestObj) {
+    	return this.http.get(`${this.API_URL}filters/metadata?token=${requestObj.token}&marketType=${requestObj.marketType}`);
+  	}
 }
