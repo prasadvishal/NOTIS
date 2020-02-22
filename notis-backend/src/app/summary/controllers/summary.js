@@ -40,6 +40,14 @@ class SummaryTradeData{
                     raw:true
                 });
 
+                let countPromise =  marketType.findAll({
+                    attributes: [
+                        [Sequelize.literal("sum(case when bsFlg = 2 then trdQty else 0 end)"), 'TotalSell'],
+                        [Sequelize.literal("sum(case when bsFlg = 1 then trdQty else 0 end)"), 'TotalBuy'],
+                        [Sequelize.literal("sum(trdQty)"), 'TotalTradeValue'],
+                        [Sequelize.literal("sum(1)"), 'TotalTrade']
+                    ]
+                })
                 if(reqdata.body.filters){
                     console.log("Filters --------------------->>>>> ",reqdata.body.filters)
                     if(reqdata.body.filters.tradeType == 'buy'){
@@ -53,6 +61,17 @@ class SummaryTradeData{
                         where: reqdata.body.filters,
                         raw:true
                     });
+                    
+                    countPromise =  marketType.findAll({
+                        attributes: [
+                            [Sequelize.literal("sum(case when bsFlg = 2 then trdQty else 0 end)"), 'TotalSell'],
+                            [Sequelize.literal("sum(case when bsFlg = 1 then trdQty else 0 end)"), 'TotalBuy'],
+                            [Sequelize.literal("sum(trdQty)"), 'TotalTradeValue'],
+                            [Sequelize.literal("sum(1)"), 'TotalTrade']
+                        ],
+                        where: reqdata.body.filters
+                    })
+                    
                     /*
                     branchIdFilter: "1"
                     cliAccountFilter: "90167"
@@ -70,17 +89,7 @@ class SummaryTradeData{
                     
                 }
 
-                let [tradeinfo, trade_sum] = await Promise.all([findPromise,
-                     marketType.findAll({
-                        attributes: [
-                            [Sequelize.literal("sum(case when bsFlg = 2 then trdQty else 0 end)"), 'TotalSell'],
-                            [Sequelize.literal("sum(case when bsFlg = 1 then trdQty else 0 end)"), 'TotalBuy'],
-                            [Sequelize.literal("sum(trdQty)"), 'TotalTradeValue'],
-                            [Sequelize.literal("sum(1)"), 'TotalTrade']
-                        ]
-                        //include: [Item]
-                    })
-                ]);
+                let [tradeinfo, trade_sum] = await Promise.all([findPromise,countPromise]);
                 console.log("Sum ----> ",trade_sum[0].dataValues.TotalSell,trade_sum[0].dataValues.TotalBuy,trade_sum[0].dataValues.TotalTrade);
                 let responseObj = {
                     'TradeData': tradeinfo,

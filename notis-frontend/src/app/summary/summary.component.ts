@@ -106,6 +106,10 @@ export class SummaryComponent implements OnInit {
         $("#trade-filter-modal").hide();
     };
 
+	resetFilters(){
+		this.getTradeData();	
+	}
+
     getFilteredData() {
         console.log("Filter Form --> ",this.filterform.value);
         let filterObj = {};
