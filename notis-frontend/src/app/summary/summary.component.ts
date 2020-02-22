@@ -44,13 +44,13 @@ export class SummaryComponent implements OnInit {
             dateLimit: ['', Validators.required]
           });
           this.filterform = this.fltrfrm.group({     // {5}
-            tradeTypeFilter:  ['', Validators.required],
-            marketTypeFilter: ['', Validators.required],
-            symbolFilter :  ['', Validators.required],
-            seriesFilter :  ['', Validators.required],
-            branchIdFilter: ['', Validators.required],
-            userFilter:   ['',Validators.required],
-            cliAccountFilter: ['',Validators.required],
+            tradeType:  ['', Validators.required],
+            mkt: ['', Validators.required],
+            sym :  ['', Validators.required],
+            ser :  ['', Validators.required],
+            brnCd: ['', Validators.required],
+            userId:   ['',Validators.required],
+            cliActNo: ['',Validators.required],
             timmerCheck:  ['',Validators.required],
             filePath:     ['', Validators.required],
             fileName:     ['', Validators.required],
@@ -64,13 +64,13 @@ export class SummaryComponent implements OnInit {
 		  		dateLimit: ['', Validators.required]
 		  	});
 		  	this.filterform = this.fltrfrm.group({     // {5}
-		  		tradeTypeFilter:  ['', Validators.required],
-		  		marketTypeFilter: ['', Validators.required],
-		  		symbolFilter :  ['', Validators.required],
-		  		seriesFilter :  ['', Validators.required],
-		  		branchIdFilter: ['', Validators.required],
-		  		userFilter: 	['',Validators.required],
-		  		cliAccountFilter: ['',Validators.required],
+		  		tradeType:  ['', Validators.required],
+		  		mkt: ['', Validators.required],
+		  		sym :  ['', Validators.required],
+		  		ser :  ['', Validators.required],
+		  		brnCd: ['', Validators.required],
+		  		userId: 	['',Validators.required],
+		  		cliActNo: ['',Validators.required],
 		  		timmerCheck: 	['',Validators.required],
 		  		filePath: 		['', Validators.required],
 		  		fileName: 		['', Validators.required],
@@ -91,238 +91,65 @@ export class SummaryComponent implements OnInit {
   		$("#transaction-backup-modal").show();
   	};
 
-
-  	genrateData(){
-    	this.tradeDataList =[{
-    		'trade_date':'21 DEC 2019',
-    		'market': 'N',
-    		'trade_no': '20191221081237',
-    		'trade_time': '10:17:23',
-    		'symbol':'RADICO',
-    		'series': 'EQ',
-    		'quantity': 432,
-    		'price': 303.71,
-    		'trade_value':131202.72,
-    		'buy_sell': 'B',
-    		'order_no':"1300000000 111292",
-    		'branch_no':1,
-    		'user_id':44215,
-    		'client_type':'CLI',
-    		'client_ac':50045,
-    		'cp_code':'INST',
-    		'remarks':"----------- remarks ----------",
-    		"cto_id":10100101010
-    	},{
-    		'trade_date':'21 DEC 2019',
-    		'market': 'N',
-    		'trade_no': '20191221081238',
-    		'trade_time': '10:19:23',
-    		'symbol':'RADICO',
-    		'series': 'EQ',
-    		'quantity': 432,
-    		'price': 303.71,
-    		'trade_value':131202.72,
-    		'buy_sell': 'B',
-    		'order_no':"1300000000 111253",
-    		'branch_no':1,
-    		'user_id':44215,
-    		'client_type':'CLI',
-    		'client_ac':50045,
-    		'cp_code':'INST',
-    		'remarks':"----------- remarks ----------",
-    		"cto_id":10100101010
-    	},{
-    		'trade_date':'21 DEC 2019',
-    		'market': 'N',
-    		'trade_no': '20191221081239',
-    		'trade_time': '10:21:53',
-    		'symbol':'RADICO',
-    		'series': 'EQ',
-    		'quantity': 432,
-    		'price': 303.71,
-    		'trade_value':131202.72,
-    		'buy_sell': 'B',
-    		'order_no':"1300000000 111342",
-    		'branch_no':1,
-    		'user_id':44215,
-    		'client_type':'CLI',
-    		'client_ac':50045,
-    		'cp_code':'INST',
-    		'remarks':null,
-    		'cto_id':2625252525
-    	},{
-    		'trade_date':'21 DEC 2019',
-    		'market': 'N',
-    		'trade_no': '20191221081237',
-    		'trade_time': '10:17:23',
-    		'symbol':'RADICO',
-    		'series': 'EQ',
-    		'quantity': 432,
-    		'price': 303.71,
-    		'trade_value':131202.72,
-    		'buy_sell': 'B',
-    		'order_no':"1300000000 111292",
-    		'branch_no':1,
-    		'user_id':44215,
-    		'client_type':'CLI',
-    		'client_ac':50045,
-    		'cp_code':'INST',
-    		'remarks':null,
-    		'cto_id':234567809
-    	},{
-    		'trade_date':'21 DEC 2019',
-    		'market': 'N',
-    		'trade_no': '20191221081238',
-    		'trade_time': '10:19:23',
-    		'symbol':'RADICO',
-    		'series': 'EQ',
-    		'quantity': 432,
-    		'price': 303.71,
-    		'trade_value':131202.72,
-    		'buy_sell': 'B',
-    		'order_no':"1300000000 111253",
-    		'branch_no':1,
-    		'user_id':44215,
-    		'client_type':'CLI',
-    		'client_ac':50045,
-    		'cp_code':'INST',
-    		'remarks':null,
-    		'cto_id':234567809
-    	},{
-    		'trade_date':'21 DEC 2019',
-    		'market': 'N',
-    		'trade_no': '20191221081239',
-    		'trade_time': '10:21:53',
-    		'symbol':'RADICO',
-    		'series': 'EQ',
-    		'quantity': 432,
-    		'price': 303.71,
-    		'trade_value':131202.72,
-    		'buy_sell': 'B',
-    		'order_no':"1300000000 111342",
-    		'branch_no':1,
-    		'user_id':44215,
-    		'client_type':'CLI',
-    		'client_ac':50045,
-    		'cp_code':'INST',
-    		'remarks':null,
-    		'cto_id':234567809
-    	},{
-    		'trade_date':'21 DEC 2019',
-    		'market': 'N',
-    		'trade_no': '20191221081237',
-    		'trade_time': '10:17:23',
-    		'symbol':'RADICO',
-    		'series': 'EQ',
-    		'quantity': 432,
-    		'price': 303.71,
-    		'trade_value':131202.72,
-    		'buy_sell': 'B',
-    		'order_no':"1300000000 111292",
-    		'branch_no':1,
-    		'user_id':44215,
-    		'client_type':'CLI',
-    		'client_ac':50045,
-    		'cp_code':'INST',
-    		'remarks':null,
-    		'cto_id':234567809
-    	},{
-    		'trade_date':'21 DEC 2019',
-    		'market': 'N',
-    		'trade_no': '20191221081238',
-    		'trade_time': '10:19:23',
-    		'symbol':'RADICO',
-    		'series': 'EQ',
-    		'quantity': 432,
-    		'price': 303.71,
-    		'trade_value':131202.72,
-    		'buy_sell': 'B',
-    		'order_no':"1300000000 111253",
-    		'branch_no':1,
-    		'user_id':44215,
-    		'client_type':'CLI',
-    		'client_ac':50045,
-    		'cp_code':'INST',
-    		'remarks':null,
-    		'cto_id':234567809
-    	},{
-    		'trade_date':'21 DEC 2019',
-    		'market': 'N',
-    		'trade_no': '20191221081239',
-    		'trade_time': '10:21:53',
-    		'symbol':'RADICO',
-    		'series': 'EQ',
-    		'quantity': 432,
-    		'price': 303.71,
-    		'trade_value':131202.72,
-    		'buy_sell': 'B',
-    		'order_no':"1300000000 111342",
-    		'branch_no':1,
-    		'user_id':44215,
-    		'client_type':'CLI',
-    		'client_ac':50045,
-    		'cp_code':'INST',
-    		'remarks':null,
-    		'cto_id':234567809
-    	},{
-    		'trade_date':'21 DEC 2019',
-    		'market': 'N',
-    		'trade_no': '20191221081237',
-    		'trade_time': '10:17:23',
-    		'symbol':'RADICO',
-    		'series': 'EQ',
-    		'quantity': 432,
-    		'price': 303.71,
-    		'trade_value':131202.72,
-    		'buy_sell': 'B',
-    		'order_no':"1300000000 111292",
-    		'branch_no':1,
-    		'user_id':44215,
-    		'client_type':'CLI',
-    		'client_ac':50045,
-    		'cp_code':'INST',
-    		'remarks':null,
-    		'cto_id':234567809
-    	},{
-    		'trade_date':'21 DEC 2019',
-    		'market': 'N',
-    		'trade_no': '20191221081238',
-    		'trade_time': '10:19:23',
-    		'symbol':'RADICO',
-    		'series': 'EQ',
-    		'quantity': 432,
-    		'price': 303.71,
-    		'trade_value':131202.72,
-    		'buy_sell': 'B',
-    		'order_no':"1300000000 111253",
-    		'branch_no':1,
-    		'user_id':44215,
-    		'client_type':'CLI',
-    		'client_ac':50045,
-    		'cp_code':'INST',
-    		'remarks':null,
-    		'cto_id':234567809
-    	},{
-    		'trade_date':'21 DEC 2019',
-    		'market': 'N',
-    		'trade_no': '20191221081239',
-    		'trade_time': '10:21:53',
-    		'symbol':'RADICO',
-    		'series': 'EQ',
-    		'quantity': 432,
-    		'price': 303.71,
-    		'trade_value':131202.72,
-    		'buy_sell': 'B',
-    		'order_no':"1300000000 111342",
-    		'branch_no':1,
-    		'user_id':44215,
-    		'client_type':'CLI',
-    		'client_ac':50045,
-    		'cp_code':'INST',
-    		'remarks':null,
-    		'cto_id':234567809
-    	}]
+    showTradeFilterModal() {
+        console.log("Inside showTradeFilterModal()");
+        $("#trade-filter-modal").show();
     };
+
+    closeTransactionBackupModal() {
+        console.log("Inside showTransactionBackupModal()");
+        $("#transaction-backup-modal").hide();
+    };
+
+    closeTradeFilterModal() {
+        console.log("Inside showTradeFilterModal()");
+        $("#trade-filter-modal").hide();
+    };
+
+    getFilteredData() {
+        console.log("Filter Form --> ",this.filterform.value);
+        let filterObj = {};
+        for(let key of Object.keys(this.filterform.value)){
+            if(this.filterform.value[key] == "" || this.filterform.value[key] == null || this.filterform.value[key] == undefined){
+                continue;
+            }else{
+                filterObj[key] = this.filterform.value[key];
+            }
+        }
+        console.log("Filter Object: ",filterObj);
+        this.summaryService.getTradeData({marketType: this.marketType, token: localStorage.getItem('token'), filters:filterObj}).subscribe((data: any) => {
+          console.log("getTradeData Response ----------> ",data);
+          if(data.code == 200 && data.data && data.data.TradeData && data.data.TradeData.length){
+            this.tradeDataList = [];
+            let tradeDataListRes = data.data.TradeData;
+            this.headers = Object.keys(data.data.TradeData[0]);
+            this.totalBuyValue = data.data.TotalBuy;
+            this.totalSellValue = data.data.TotalSell;
+            this.totalTradeValue = data.data.TotalTradeValue;
+            this.totalTrade = data.data.TotalTrade;
+
+            for(let trade of tradeDataListRes){
+              this.tradeDataList.push(Object.values(trade))
+			}
+			console.log("Succfull filtered")
+			//$("#trade-filter-modal").hide();
+          }else if(data.code == 401){
+              alert("Session Expired. Login Again.");
+              console.log("Session Expired. Login Again.")
+              localStorage.setItem('isLoggedIn', 'false');
+              localStorage.setItem('userData', '');
+              localStorage.setItem('marketType', '');
+              localStorage.setItem('token', '');
+              this.router.navigate(['/login']);
+          }
+          else{
+            console.log("Error / No Data");
+          }
+          this.hideLoader = true;
+
+        })
+    };
+
 
     getTradeData(){
       this.marketType = localStorage.getItem('marketType');

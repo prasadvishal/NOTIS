@@ -36,25 +36,42 @@ class SummaryTradeData{
                         marketType = NseFO;
                         break;
                 }
-                // let tradeinfo = await NseCM3.findAll({ 
-                //     raw:true
-                // })
-                // //console.log("Trade Data from DB --------> ",tradeinfo);
+                let findPromise = marketType.findAll({ 
+                    raw:true
+                });
 
-                // let trade_sum = await NseCM3.findAll({
-                //     attributes: [
-                //         [Sequelize.literal("sum(case when bsFlg = 2 then trdQty else 0 end)"), 'TotalSell'],
-                //         [Sequelize.literal("sum(case when bsFlg = 1 then trdQty else 0 end)"), 'TotalBuy'],
-                //         [Sequelize.literal("sum(trdQty)"), 'TotalTrade'],
-                //     ]
-                //     //include: [Item]
-                // });
-
-                let [tradeinfo, trade_sum] = await Promise.all([
-                    marketType.findAll({ 
+                if(reqdata.body.filters){
+                    console.log("Filters --------------------->>>>> ",reqdata.body.filters)
+                    if(reqdata.body.filters.tradeType == 'buy'){
+                        reqdata.body.filters['bsFlg'] = 2;
+                    }
+                    else if(reqdata.body.filters.tradeType == 'sell'){
+                        reqdata.body.filters['bsFlg'] = 1;
+                    }
+                    delete reqdata.body.filters.tradeType;
+                    findPromise = marketType.findAll({ 
+                        where: reqdata.body.filters,
                         raw:true
-                    })
-                    ,marketType.findAll({
+                    });
+                    /*
+                    branchIdFilter: "1"
+                    cliAccountFilter: "90167"
+                    endNoFilter: "987654"
+                    fileName: "sdfghgtryu"
+                    filePath: "2345678dfghjk"
+                    includeDateInFilename: "1"
+                    marketTypeFilter: "Spot"
+                    startNoFilter: "2345678"
+                    symbolFilter: "N"
+                    timmerCheck: "1"
+                    tradeTypeFilter: "buy"
+                    userFilter: "44215"
+                    */
+                    
+                }
+
+                let [tradeinfo, trade_sum] = await Promise.all([findPromise,
+                     marketType.findAll({
                         attributes: [
                             [Sequelize.literal("sum(case when bsFlg = 2 then trdQty else 0 end)"), 'TotalSell'],
                             [Sequelize.literal("sum(case when bsFlg = 1 then trdQty else 0 end)"), 'TotalBuy'],
