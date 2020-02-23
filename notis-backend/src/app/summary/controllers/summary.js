@@ -49,14 +49,46 @@ class SummaryTradeData{
                     ]
                 })
                 if(reqdata.body.filters){
-                    console.log("Filters --------------------->>>>> ",reqdata.body.filters)
+                    console.log("1. Received Filters --------------------->>>>> ",reqdata.body.filters)
                     if(reqdata.body.filters.tradeType == 'buy'){
                         reqdata.body.filters['bsFlg'] = 2;
                     }
                     else if(reqdata.body.filters.tradeType == 'sell'){
                         reqdata.body.filters['bsFlg'] = 1;
                     }
+
+                    if(reqdata.body.filters.startNoFilter && !reqdata.body.filters.endNoFilter){
+                        if(!isNaN(parseInt(reqdata.body.filters.startNoFilter))){
+                           reqdata.body.filters['trdNo'] = {
+                               $gte : parseInt(reqdata.body.filters.startNoFilter)
+                           } 
+                        }
+                        delete reqdata.body.filters.startNoFilter;
+
+                    }
+                    else if(reqdata.body.filters.endNoFilter && !reqdata.body.filters.startNoFilter){
+                        if(!isNaN(parseInt(reqdata.body.filters.endNoFilter))){
+                           reqdata.body.filters['trdNo'] = {
+                               $lte : parseInt(reqdata.body.filters.endNoFilter)
+                           } 
+                        }
+                        delete reqdata.body.filters.endNoFilter;
+
+                    }
+
+                    else if(reqdata.body.filters.endNoFilter && reqdata.body.filters.startNoFilter){
+                        if(!isNaN(parseInt(reqdata.body.filters.endNoFilter)) && !isNaN(parseInt(reqdata.body.filters.startNoFilter))){
+                           reqdata.body.filters['trdNo'] = {
+                               $between : [parseInt(reqdata.body.filters.startNoFilter),parseInt(reqdata.body.filters.endNoFilter)]
+                           } 
+                        }
+                        delete reqdata.body.filters.endNoFilter;
+                        delete reqdata.body.filters.startNoFilter;
+
+                    }
                     delete reqdata.body.filters.tradeType;
+                    console.log("2. Processed Filters --------------------->>>>> ",reqdata.body.filters)
+
                     findPromise = marketType.findAll({ 
                         where: reqdata.body.filters,
                         raw:true
