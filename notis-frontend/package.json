@@ -19,8 +19,10 @@
     "@angular/platform-browser": "~8.2.14",
     "@angular/platform-browser-dynamic": "~8.2.14",
     "@angular/router": "~8.2.14",
+    "file-saver": "^2.0.2",
     "jquery": "^3.4.1",
     "rxjs": "~6.4.0",
+    "rxjs-compat": "^6.5.4",
     "tslib": "^1.10.0",
     "zone.js": "~0.9.1"
   },

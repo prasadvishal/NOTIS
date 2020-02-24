@@ -194,7 +194,7 @@
 
                     	<div class="modal-field col-sm-3" style="padding: 0;">
                     	    <label for="userId">User ID:</label>
-                    	    <select class="form-control" formControlName="userId" id="userId" name="userId" >
+                    	    <select class="form-control" formControlName="usrId" id="userId" name="userId" >
                     	      <option disabled value="" selected>Select User</option>
                     	      <option *ngFor="let uid of userIds">{{uid}}</option>
                     	    </select>
@@ -209,7 +209,7 @@
                     	</div>
 					</div>
 					<!-- Row 4 <Select Dropdowns BranchId UserId CliAccountId> -->
-	            	<div class='row'>
+<!-- 	            	<div class='row'>
 		    		  	<div class="modal-field col-sm-3" style="padding: 0;">
                     	   <label for="startTimeFilter">Start Time:</label>
 							<input type="time" id="startTimeFilter" name="startTimeFilter" >
@@ -230,7 +230,7 @@
                     	   <label for="timeIntervalFilter">Time Interval:</label>
 							<input type="text" id="timeIntervalFilter" name="timeIntervalFilter" value="00:00:00">
                     	</div>
-					</div>
+					</div> -->
 
 					<!-- Row 5 <Select Dropdowns BranchId UserId CliAccountId> -->
 	            	<div class='row'>
@@ -294,7 +294,7 @@
             	</form>
             	<div class="row">
 	 				<div class="col-sm-3">
-	 					<button class="modal-btn-start" style="width:100%;">Start</button>
+	 					<button class="modal-btn-start" (click)="takeTradeBackup()" style="width:100%;">Start</button>
 	 				</div>
 	 				<div class="col-sm-3">
 	 					<a class="modal-btn-cancel" style="float:right; width:100%;" href="" data-dismiss="modal">Cancel                 
@@ -373,7 +373,7 @@
 
                         <div class="modal-field col-sm-3" style="padding: 0;">
                             <label for="userId">User ID:</label>
-                            <select class="form-control" formControlName="userId" id="userId" name="userId" >
+                            <select class="form-control" formControlName="usrId" id="userId" name="userId" >
                               <option disabled value="" selected>Select User</option>
                               <option *ngFor="let uid of userIds">{{uid}}</option>
                             </select>

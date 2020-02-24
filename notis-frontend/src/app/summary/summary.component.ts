@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { saveAs } from "file-saver";
+import 'rxjs/Rx' ;
 import * as $ from 'jquery';
 import { SummaryService } from '../services/summary/summary.service';
 import { Constants } from '../app.constants';
@@ -49,7 +51,7 @@ export class SummaryComponent implements OnInit {
             sym :  ['', Validators.required],
             ser :  ['', Validators.required],
             brnCd: ['', Validators.required],
-            userId:   ['',Validators.required],
+            usrId:   ['',Validators.required],
             cliActNo: ['',Validators.required],
             timmerCheck:  ['',Validators.required],
             filePath:     ['', Validators.required],
@@ -69,7 +71,7 @@ export class SummaryComponent implements OnInit {
 		  		sym :  ['', Validators.required],
 		  		ser :  ['', Validators.required],
 		  		brnCd: ['', Validators.required],
-		  		userId: 	['',Validators.required],
+		  		usrId: 	['',Validators.required],
 		  		cliActNo: ['',Validators.required],
 		  		timmerCheck: 	['',Validators.required],
 		  		filePath: 		['', Validators.required],
@@ -107,13 +109,15 @@ export class SummaryComponent implements OnInit {
     };
 
 	resetFilters(){
+    this.filterform.reset()
 		this.getTradeData();	
 	}
 
     getFilteredData() {
         console.log("Filter Form --> ",this.filterform.value);
         let filterObj = {};
-        for(let key of Object.keys(this.filterform.value)){
+        for(let key of Object.keys(this.filterform.value))
+        {
             if(this.filterform.value[key] == "" || this.filterform.value[key] == null || this.filterform.value[key] == undefined){
                 continue;
             }else{
@@ -122,34 +126,36 @@ export class SummaryComponent implements OnInit {
         }
         console.log("Filter Object: ",filterObj);
         this.summaryService.getTradeData({marketType: this.marketType, token: localStorage.getItem('token'), filters:filterObj}).subscribe((data: any) => {
-          console.log("getTradeData Response ----------> ",data);
-          if(data.code == 200 && data.data && data.data.TradeData && data.data.TradeData.length){
-            this.tradeDataList = [];
-            let tradeDataListRes = data.data.TradeData;
-            this.headers = Object.keys(data.data.TradeData[0]);
-            this.totalBuyValue = data.data.TotalBuy;
-            this.totalSellValue = data.data.TotalSell;
-            this.totalTradeValue = data.data.TotalTradeValue;
-            this.totalTrade = data.data.TotalTrade;
+        console.log("getTradeData Response ----------> ",data);
+        if(data.code == 200 && data.data && data.data.TradeData && data.data.TradeData.length){
+          this.tradeDataList = [];
+          let tradeDataListRes = data.data.TradeData;
+          this.headers = Object.keys(data.data.TradeData[0]);
+          this.totalBuyValue = data.data.TotalBuy;
+          this.totalSellValue = data.data.TotalSell;
+          this.totalTradeValue = data.data.TotalTradeValue;
+          this.totalTrade = data.data.TotalTrade;
 
-            for(let trade of tradeDataListRes){
-              this.tradeDataList.push(Object.values(trade))
-			}
-			console.log("Succfull filtered")
-			//$("#trade-filter-modal").hide();
-          }else if(data.code == 401){
-              alert("Session Expired. Login Again.");
-              console.log("Session Expired. Login Again.")
-              localStorage.setItem('isLoggedIn', 'false');
-              localStorage.setItem('userData', '');
-              localStorage.setItem('marketType', '');
-              localStorage.setItem('token', '');
-              this.router.navigate(['/login']);
-          }
-          else{
-            console.log("Error / No Data");
-          }
-          this.hideLoader = true;
+          for(let trade of tradeDataListRes)
+          {
+            this.tradeDataList.push(Object.values(trade))
+		      }
+		      console.log("Succfull filtered")
+		      //$("#trade-filter-modal").hide();
+        }
+        else if(data.code == 401){
+          alert("Session Expired. Login Again.");
+          console.log("Session Expired. Login Again.")
+          localStorage.setItem('isLoggedIn', 'false');
+          localStorage.setItem('userData', '');
+          localStorage.setItem('marketType', '');
+          localStorage.setItem('token', '');
+          this.router.navigate(['/login']);
+        }
+        else{
+          console.log("Error / No Data");
+        }
+        this.hideLoader = true;
 
         })
     };
@@ -189,6 +195,34 @@ export class SummaryComponent implements OnInit {
 
       })
     } ; 
+
+
+    takeTradeBackup() {
+        console.log("Filter Form Trade Backup --> ",this.filterform.value);
+        let filterObj = {};
+        for(let key of Object.keys(this.filterform.value))
+        {
+            if(this.filterform.value[key] == "" || this.filterform.value[key] == null || this.filterform.value[key] == undefined){
+                continue;
+            }else{
+                filterObj[key] = this.filterform.value[key];
+            }
+        }
+        console.log("Filter Object: ",filterObj);
+        alert("CSV Received, check API Response in network tab.")
+        this.summaryService.getTradeDataBackup({marketType: this.marketType, token: localStorage.getItem('token'), filters:filterObj}).subscribe((data: any) => {
+        //console.log("getTradeData Response ----------> ",data);
+        this.downloadFile(data);
+        this.hideLoader = true;
+
+        })
+    };
+
+    downloadFile(data: any) {
+      const blob = new Blob([data], { type: 'text/csv' });
+      const url= window.URL.createObjectURL(blob);
+      window.open(url);
+    }
 
     getFiltersMetadata(){
       this.marketType = localStorage.getItem('marketType');

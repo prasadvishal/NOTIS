@@ -63,6 +63,23 @@ module.exports = function(app, router) {
 
     });    
 
+    //getTradeData api route
+    app.post('/getTradeDataBackup', middleware.authReq, async function(req, res){
+        let TradeSummary = require("../app/summary/controllers/summary");
+        let tradeSummary = new TradeSummary();
+        let nseResponse = new NseResponse();
+        try{
+            let resp = await tradeSummary.getTradeDataBackup(req)
+            //console.log("Response Data ---> ",resp)
+            res.setHeader('Content-Type', 'text/csv');
+            res.sendFile(resp.file);
+            // res.download(resp.file, `${resp.fileName}`);
+        }catch(err){
+            console.error("Error in login process ----> ", err);
+            res.send(await nseResponse.serverErrorResponse());
+        }
+
+    }); 
     //getFiltersMetadata api route
     app.get('/filters/metadata', middleware.authReq, async function(req, res){
         let NseUtils = require("../app/nse/controllers/nseUtils");
