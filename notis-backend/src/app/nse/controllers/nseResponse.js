@@ -72,11 +72,11 @@ class NseResponse {
     	}
         return errResp;
     }
-    async successResponse(data = null) {
+    async successResponse(data = null, msg = "Success.") {
     	let errResp = {
     		'code' : Constants.OK_SUCCESS.CODE,
     		'status': Constants.OK_SUCCESS.STATUS,
-    		'msg' : "Success.",
+    		'msg' : msg,
     	}
     	if(data && data != {} && data != []){
     		errResp['data'] = data;

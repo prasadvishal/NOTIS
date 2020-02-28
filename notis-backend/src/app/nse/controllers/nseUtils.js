@@ -120,6 +120,8 @@ class NseUtils{
                 console.log("nseData.data.tradesInquiry.split('^').lengt", nseData.data.tradesInquiry.split('^').length)
                 if(nseData.status == 'success' && !this.utils.isEmpty(nseData.data.tradesInquiry) && nseData.data.tradesInquiry.split('^').length > 2){
                     if(!(this.utils.isEmpty(nseData)) &&!(this.utils.isEmpty(nseData.data))){
+                        await insertIntoNseFilters(nseData, tradeData.name);
+
                         switch(tradeData.name){
                             case 'notis_cm': 
                                 await this.insertInCM(nseData, nseRes.dataValues.id);
@@ -150,11 +152,49 @@ class NseUtils{
         }) 
     }
 
+    insertIntoNseFilters(nseData, tradeName){
+        return new Promise((resolve, reject) => {
+            let nseCsvData = [];
+            let nseCsvRaw = nseData.data.tradesInquiry.split('^');
+            for(var i = 1; i<nseCsvRaw.length ; i++){
+                let dataPoints = nseCsvRaw[i].split(',');
+                let branchCode = dataPoints[9];
+                let cliActNo = dataPoints[12];
+                let userId = dataPoints[10];
+                switch(tradeName){
+                    case 'notis_cm': 
+                        var series = dataPoints[27];
+                        var symbol = dataPoints[26];
+                        var marketType = 'CM';
+                        break;
+
+                    case 'notis_cd': 
+                        var series = dataPoints[24];
+                        var symbol = dataPoints[23];
+                        var marketType = 'CD';
+                        break;
+
+                    case 'notis_fo': 
+                        var series = dataPoints[24];
+                        var symbol = dataPoints[23];
+                        var marketType = 'FO';
+                        break;
+                }try{ 
+                    BranchFilterModel.create({branch: branchCode, market_type: marketType});
+                    resolve(null)
+                } catch(e){
+                    console.log("========>>>>>>>>>>", e);
+                    reject(e);
+                }       
+            }
+        })
+    }
+
     insertInCM(nseData, nseMainDataId){
         return new Promise( async (resolve, reject) =>{ 
         let nseCsvData = [];
         let nseCsvRaw = nseData.data.tradesInquiry.split('^');
-        console.log("UUUUUUUUUUUUUUUUUUUU", nseCsvRaw.length)
+        // console.log("UUUUUUUUUUUUUUUUUUUU", nseCsvRaw.length)
         for(var i = 1; i<nseCsvRaw.length ; i++){
             // console.log("i ---> ",i,"nseCsvData",nseCsvRaw.length, nseCsvRaw[i].split(',').length);
             let dataPoints = nseCsvRaw[i].split(',');

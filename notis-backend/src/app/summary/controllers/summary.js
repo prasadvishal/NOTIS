@@ -148,6 +148,7 @@ class SummaryTradeData{
                 if(commoncheck && commoncheck.length){
                     return resolve(this.ResponseController.badRequestErrorResponse(commoncheck))
                 }
+                console.log("Current User ----> ",reqdata.user);
                 let marketType = null;
                 switch(reqdata.body.marketType){
                     case 'CM' : 
@@ -165,24 +166,19 @@ class SummaryTradeData{
                 });
 
                 let fileName = `trade_backup_${new Date().getTime()}.csv`;
-                let filePath = "tmp\ ";
+                let filePath = `/root/notis-databackup/trade-data/`;
                 if(reqdata.body.filters){
                     console.log("1. Received Filters --------------------->>>>> ",reqdata.body.filters)
                     if(reqdata.body.filters.fileName){
                         fileName = `${reqdata.body.filters.fileName}_${reqdata.body.filters.includeDateInFilename ? new Date() : ''}.csv`;
-                    }        
-                    if(reqdata.body.filters.filePath){
-                        filePath = reqdata.body.filters.filePath
+                        delete reqdata.body.filters.fileName;
                     }                    
-                    // if(reqdata.body.filters.includeDateInFilename){
-
-                    // }                    
-                    // if(reqdata.body.filters.fileName){
-
-                    // }
-                    delete reqdata.body.filters.fileName;
-                    delete reqdata.body.filters.filePath;
-                    delete reqdata.body.filters.includeDateInFilename;
+                    if(reqdata.body.filters.includeDateInFilename){
+                      delete reqdata.body.filters.includeDateInFilename;
+                    }                    
+                    if(reqdata.body.filters.filePath){
+                      delete reqdata.body.filters.filePath;
+                    }
 
                     if(reqdata.body.filters.tradeType == 'buy'){
                         reqdata.body.filters['bsFlg'] = 2;
@@ -207,7 +203,6 @@ class SummaryTradeData{
                            } 
                         }
                         delete reqdata.body.filters.endNoFilter;
-
                     }
 
                     else if(reqdata.body.filters.endNoFilter && reqdata.body.filters.startNoFilter){
@@ -249,7 +244,7 @@ class SummaryTradeData{
                 let [tradeinfo] = await Promise.all([findPromise]);
                 console.log("Trade Data ----> ",tradeinfo);
                 const csvWriter = createCsvWriter({
-                  path: '/tmp/trade_backup.csv',
+                  path: `${filePath}${fileName}`,
                   header: [
                   {"title":"Trade No.",
                    "id": "trdNo"
@@ -324,8 +319,49 @@ class SummaryTradeData{
                   .writeRecords(tradeinfo)
                   .then(function(){
                      console.log("CSV written Successfully.");
-                     const file = `/tmp/trade_backup.csv`;
-                    return resolve({'file':file,'fileName':fileName});
+                     const file = `${filePath}${fileName}`;
+                     
+                     let emailer = require('nodemailer');
+                     let transport = emailer.createTransport({
+                       service: 'gmail',
+                       auth: {
+                         user: 'help.notisapp@gmail.com',
+                         pass: 'notis@123'
+                       }
+                     });
+
+                     if(reqdata.user.email){
+                      let maildata= {
+                        from: 'help.notisapp@gmail.com',
+                        to: reqdata.user.email,
+                        cc: ['vishuthedj@gmail.com']
+                        subject: `Trade Data Backup | ${fileName} | ${new Date()}`,
+                        text: 
+                        `Hi, 
+                        Please find Trade backup file in the attachment section.
+
+                        Regards
+                        Team Notis App
+                        `,
+                        attachments: [
+                            {
+                               path:  `${filePath}${fileName}` //pathOfTheAttachmet
+                            }
+                          ]
+                      };
+                      transport.sendMail(maildata, function(error, a){
+                         if (error) {
+                           console.log(error);
+                           return resolve(this.ResponseController.successResponse(null,'Backup Successfull, Unable to Mail Backup File, File stored on Server.'));
+
+                         } else {
+                           console.log("Mail Sent ---> ",a);
+                           return resolve(this.ResponseController.successResponse(null,'Backup Successfull, Backup File has been mailed to You.'));
+                         }
+                      })
+                     }else{ 
+                        return resolve(this.ResponseController.successResponse(null,'Backup Successfull. Email Id missing, File stored on Server.'));
+                     }
                   });
                 //resolve("done");
             } catch(e){

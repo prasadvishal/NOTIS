@@ -71,9 +71,9 @@ module.exports = function(app, router) {
         try{
             let resp = await tradeSummary.getTradeDataBackup(req)
             //console.log("Response Data ---> ",resp)
-            res.setHeader('Content-Type', 'text/csv');
-            res.sendFile(resp.file);
-            // res.download(resp.file, `${resp.fileName}`);
+            // res.setHeader('Content-Type', 'text/csv');
+            // res.sendFile(resp.file);
+            res.send(resp);
         }catch(err){
             console.error("Error in login process ----> ", err);
             res.send(await nseResponse.serverErrorResponse());
