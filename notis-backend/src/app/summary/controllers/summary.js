@@ -372,13 +372,14 @@ class SummaryTradeData{
                 if(commoncheck && commoncheck.length){
                     return resolve(this.ResponseController.badRequestErrorResponse(commoncheck))
                 }
-                console.log("Current User ----> ",reqdata.user);
-                console.log("File received ----> ",reqdata.file);
+                //console.log("Current User ----> ",reqdata.user);
                 let filedata = (reqdata.file.buffer).toString('binary').split('\n');
+                console.log("Data Records to be Inserted ----> ",filedata.length);
 
                 let marketType = null;
                 switch(reqdata.query.marketType){
                     case 'CM' : 
+                        await CMSecurity.drop();
                         for(let datarow of filedata){
                           let datacols = datarow.split('|');
                           console.log("CM Data Row ---> ", datarow, " Column Count ---> ", datacols.length);
@@ -393,6 +394,7 @@ class SummaryTradeData{
                         }
                         break;
                     case 'CD' : 
+                        await CDContract.drop();
                         for(let datarow of filedata){
                           let datacols = datarow.split('|');
                           console.log("CD Data Row ---> ", datarow, " Column Count ---> ", datacols.length);
@@ -410,7 +412,22 @@ class SummaryTradeData{
                         }
                         break;
                     case 'FO' :
-                        marketType = FOContract;
+                        await FOContract.destroy({ truncate: true });
+                        for(let datarow of filedata){
+                          let datacols = datarow.split('|');
+                          console.log("FO Data Row ---> ", datarow, " Column Count ---> ", datacols.length);
+                          if(datacols && datacols.length && datacols.length == 69){
+                            let obj = {
+                              instrument_type: datacols[2],
+                              symbol: datacols[3],
+                              expiry_date: datacols[6],
+                              strike_price: datacols[7],
+                              option_type: datacols[8],
+                              security_name: datacols[53],
+                            }
+                            let nseRes = await FOContract.create(obj);
+                          }
+                        }
                         break;
                 }
                 // console.log("File data ----> ",(reqdata.file.buffer).toString('binary'));
