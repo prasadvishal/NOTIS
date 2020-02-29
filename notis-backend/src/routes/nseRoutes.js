@@ -2,6 +2,10 @@ let NseToken = require("../app/nse/controllers/nseToken");
 let NseResponse = require("../app/nse/controllers/nseResponse");
 let nseToken = new NseToken();
 let Middleware = require('../app/middleware/middleware')
+const multer = require('multer');
+const upload = multer({ storage: multer.memoryStorage() });
+
+
 
 module.exports = function(app, router) {
     let middleware = new Middleware();
@@ -80,6 +84,22 @@ module.exports = function(app, router) {
         }
 
     }); 
+
+
+    app.post('/uploadCsv', middleware.authReq, upload.single('filedata'), async function(req, res){
+        let TradeSummary = require("../app/summary/controllers/summary");
+        let tradeSummary = new TradeSummary();
+        let nseResponse = new NseResponse();
+        try{
+            let resp = await tradeSummary.saveCsvInDb(req);
+            res.send(resp);
+        }catch(err){
+            console.error("Error in login process ----> ", err);
+            res.send(await nseResponse.serverErrorResponse());
+        }
+
+    }); 
+
     //getFiltersMetadata api route
     app.get('/filters/metadata', middleware.authReq, async function(req, res){
         let NseUtils = require("../app/nse/controllers/nseUtils");

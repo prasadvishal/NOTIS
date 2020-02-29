@@ -10,7 +10,7 @@
  					<button class="icon-btn" style="width:100%;" (click)="showTradeFilterModal()" data-toggle="modal" data-target="#trade-filter-modal"><i class="ti-filter"></i> Trade Filter</button>
  				</div>
  				<div class="col">
- 					<button class="icon-btn" style="float:right; width:100%;"><i class="ti-upload"></i> Upload</button>
+ 					<button class="icon-btn" style="float:right; width:100%;" (click)="showUploadFileModal()" data-toggle="modal" data-target="#upload-file-modal"><i class="ti-upload"></i> Upload</button>
                  </div>
                  <div class="col">
                     <button class="icon-btn" style="float:right; width:100%;" (click)="resetFilters()"><i class="ti-na"></i> Remove Filters</button>
@@ -490,22 +490,28 @@
 <!-- Video Modal END -->
 
     <!--Delete Confirmation modal Start -->
-<!-- <div class="modal fade"  id="deleteModal" data-backdrop="static" data-keyboard="false">
-  <div class="modal-dialog">  -->
+<div class="modal fade"  id="upload-file-modal" data-backdrop="static" data-keyboard="false">
+  <div class="modal-dialog"> 
     <!-- Modal content-->
-<!--      <div class="modal-content">
+     <div class="modal-content">
       <div class="modal-body">
-        <p>Session Expired.</p>
+        <div class="col form-group">Upload  File</div>
+        <div ng-if="newUpload" class="col form-group">
+            <label for="uploadfile">Choose File</label>
+            <input type="file"
+                   id="uploadfile" name="uploadfile" accept=".txt, .csv"
+                   (change)="handleFileInput($event.target.files)" style="margin:5%">
+        </div>
+        <div *ngIf="fileErrorMsg && fileError"><p style="color: red">{{fileErrorMsg}}</p></div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default btn-success"  (click)="DeleteAd()">Confirm</button>
-       
+        <button type="button" class="btn btn-default btn-success" [disabled]="fileError"  (click)="uploadCsvFile()" >Confirm</button>    
         <button type="button" class="btn btn-default btn-danger" data-dismiss="modal" #closeDeleteBtn>Cancel</button>
       </div>
     </div>
 
   </div>
-</div> -->
+</div>
 <!--Delete Confirmation modal End -->
 
 <!-- <script type="text/javascript">

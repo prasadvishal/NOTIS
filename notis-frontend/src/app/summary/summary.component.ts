@@ -30,7 +30,9 @@ export class SummaryComponent implements OnInit {
 	branches: Array<string> = [];
     marketType : string;
     hideLoader: boolean = true ;
-
+    fileToUpload: File = null;
+    fileErrorMsg = null;
+    fileError = true;
   	constructor( 
   		private fb: FormBuilder,
   		private fltrfrm: FormBuilder,
@@ -87,6 +89,45 @@ export class SummaryComponent implements OnInit {
 		console.log("Trade Data List ---> ",this.tradeDataList)
         }
   	};
+
+    showUploadFileModal() {
+        console.log("Inside showUploadFileModal()");
+        $("#upload-file-modal").show();
+    };
+
+    uploadCsvFile() {
+
+        if(this.fileToUpload){
+            this.summaryService.postFile({marketType: this.marketType, token: localStorage.getItem('token')} ,this.fileToUpload).subscribe((data: any) => {
+              if(data && data.code && data.code == 200){
+                alert("File Sucessfully Uploaded.");
+              }
+              }, error => {
+                console.log("Error in uploading File: ",error);
+                alert(error);
+              });
+        }
+        //$("#upload-file-modal").show();
+    };
+
+    handleFileInput(files: FileList) {
+        this.fileToUpload = files.item(0);
+        console.log("Inside handleFileInput()", this.fileToUpload);
+        if(this.marketType == 'CM' && !['security.txt', 'security.csv'].includes(this.fileToUpload.name.toLowerCase())){
+            this.fileError = true;
+            this.fileErrorMsg = `Invalid file, please select 'security.txt/security.csv`;
+        }else if(this.marketType == 'CD' && !['cd_contract.txt', 'cd_contract.csv'].includes(this.fileToUpload.name.toLowerCase())){
+            this.fileError = true;
+            this.fileErrorMsg = `Invalid file, please select 'cd_contract.txt/cd_contract.csv`;
+        }else if(this.marketType == 'FO' && !['contract.txt', 'contract.csv'].includes(this.fileToUpload.name.toLowerCase())){
+            this.fileError = true;
+            this.fileErrorMsg = `Invalid file, please select 'contract.txt/contract.csv`;
+        }else{
+            this.fileError = false;
+            this.fileErrorMsg = null;
+        }
+        //$("#upload-file-modal").show();
+    };
 
   	showTransactionBackupModal() {
   		console.log("Inside showTransactionBackupModal()");
@@ -208,21 +249,15 @@ export class SummaryComponent implements OnInit {
                 filterObj[key] = this.filterform.value[key];
             }
         }
-        console.log("Filter Object: ",filterObj);
-        alert("CSV Received, check API Response in network tab.")
+        //console.log("Filter Object: ",filterObj);
         this.summaryService.getTradeDataBackup({marketType: this.marketType, token: localStorage.getItem('token'), filters:filterObj}).subscribe((data: any) => {
-        //console.log("getTradeData Response ----------> ",data);
-        this.downloadFile(data);
+        console.log("getTradeData Response ----------> ",data);
+        alert(data.msg);
         this.hideLoader = true;
 
         })
     };
 
-    downloadFile(data: any) {
-      const blob = new Blob([data], { type: 'text/csv' });
-      const url= window.URL.createObjectURL(blob);
-      window.open(url);
-    }
 
     getFiltersMetadata(){
       this.marketType = localStorage.getItem('marketType');

@@ -4,6 +4,9 @@ const Op = Sequelize.Op;
 let NseCM3 = require('../../nse/models/NseCM3');
 let NseCD = require('../../nse/models/NseCD');
 let NseFO = require('../../nse/models/NseFO');
+let CDContract = require('../../nse/models/CDContract');
+let CMSecurity = require('../../nse/models/CMSecurity');
+let FOContract = require('../../nse/models/FOContract');
 let Utils = require('../../nse/controllers/nseUtils');
 let CommonController = require('../../nse/controllers/nseCommon');
 let ResponseController = require('../../nse/controllers/nseResponse');
@@ -104,22 +107,7 @@ class SummaryTradeData{
                         ],
                         where: reqdata.body.filters
                     })
-                    
-                    /*
-                    branchIdFilter: "1"
-                    cliAccountFilter: "90167"
-                    endNoFilter: "987654"
-                    fileName: "sdfghgtryu"
-                    filePath: "2345678dfghjk"
-                    includeDateInFilename: "1"
-                    marketTypeFilter: "Spot"
-                    startNoFilter: "2345678"
-                    symbolFilter: "N"
-                    timmerCheck: "1"
-                    tradeTypeFilter: "buy"
-                    userFilter: "44215"
-                    */
-                    
+
                 }
 
                 let [tradeinfo, trade_sum] = await Promise.all([findPromise,countPromise]);
@@ -144,6 +132,7 @@ class SummaryTradeData{
             // let tokenController = new TokenController();
             try{
                 let commoncheck = this.CommonController.commonCheck(reqdata, ['marketType'], 'body');
+                let that = this;
                 console.log("Common Check ----> ",commoncheck);
                 if(commoncheck && commoncheck.length){
                     return resolve(this.ResponseController.badRequestErrorResponse(commoncheck))
@@ -170,7 +159,7 @@ class SummaryTradeData{
                 if(reqdata.body.filters){
                     console.log("1. Received Filters --------------------->>>>> ",reqdata.body.filters)
                     if(reqdata.body.filters.fileName){
-                        fileName = `${reqdata.body.filters.fileName}_${reqdata.body.filters.includeDateInFilename ? new Date() : ''}.csv`;
+                        fileName = `${reqdata.body.filters.fileName}${reqdata.body.filters.includeDateInFilename ? '_'+new Date() : ''}.csv`;
                         delete reqdata.body.filters.fileName;
                     }                    
                     if(reqdata.body.filters.includeDateInFilename){
@@ -327,14 +316,17 @@ class SummaryTradeData{
                        auth: {
                          user: 'help.notisapp@gmail.com',
                          pass: 'notis@123'
-                       }
+                       },
+                        tls: {
+                            rejectUnauthorized: false
+                        }
                      });
 
-                     if(reqdata.user.email){
+                     if(reqdata.user.user_email){
                       let maildata= {
                         from: 'help.notisapp@gmail.com',
-                        to: reqdata.user.email,
-                        cc: ['vishuthedj@gmail.com']
+                        to: reqdata.user.user_email,
+                        cc: ['vishuthedj@gmail.com'],
                         subject: `Trade Data Backup | ${fileName} | ${new Date()}`,
                         text: 
                         `Hi, 
@@ -351,24 +343,86 @@ class SummaryTradeData{
                       };
                       transport.sendMail(maildata, function(error, a){
                          if (error) {
-                           console.log(error);
-                           return resolve(this.ResponseController.successResponse(null,'Backup Successfull, Unable to Mail Backup File, File stored on Server.'));
+                           console.log("Error in sending mail ---> ",error);
+                           return resolve(that.ResponseController.successResponse(null,'Backup Successfull, Unable to Mail Backup File, File stored on Server.'));
 
                          } else {
                            console.log("Mail Sent ---> ",a);
-                           return resolve(this.ResponseController.successResponse(null,'Backup Successfull, Backup File has been mailed to You.'));
+                           return resolve(that.ResponseController.successResponse(null,'Backup Successfull, Backup File has been mailed to You.'));
                          }
                       })
                      }else{ 
-                        return resolve(this.ResponseController.successResponse(null,'Backup Successfull. Email Id missing, File stored on Server.'));
+                        return resolve(that.ResponseController.successResponse(null,'Backup Successfull. Email Id missing, File stored on Server.'));
                      }
                   });
-                //resolve("done");
+                resolve("done");
             } catch(e){
                 reject(e);
             }
         });
     }
+
+    saveCsvInDb(reqdata){
+        return new Promise(async (resolve, reject) => {
+            // let tokenController = new TokenController();
+            try{
+                let commoncheck = this.CommonController.commonCheck(reqdata, ['marketType'], 'query');
+                let that = this;
+                console.log("Common Check ----> ",commoncheck);
+                if(commoncheck && commoncheck.length){
+                    return resolve(this.ResponseController.badRequestErrorResponse(commoncheck))
+                }
+                console.log("Current User ----> ",reqdata.user);
+                console.log("File received ----> ",reqdata.file);
+                let filedata = (reqdata.file.buffer).toString('binary').split('\n');
+
+                let marketType = null;
+                switch(reqdata.query.marketType){
+                    case 'CM' : 
+                        for(let datarow of filedata){
+                          let datacols = datarow.split('|');
+                          console.log("CM Data Row ---> ", datarow, " Column Count ---> ", datacols.length);
+                          if(datacols && datacols.length && datacols.length == 54){
+                            let obj = {
+                              symbol:datacols[1],
+                              series:datacols[2],
+                              security_name:datacols[21]
+                            }
+                            let nseRes = await CMSecurity.create(obj);
+                          }
+                        }
+                        break;
+                    case 'CD' : 
+                        for(let datarow of filedata){
+                          let datacols = datarow.split('|');
+                          console.log("CD Data Row ---> ", datarow, " Column Count ---> ", datacols.length);
+                          if(datacols && datacols.length && datacols.length == 69){
+                            let obj = {
+                              instrument_type: datacols[2],
+                              symbol: datacols[3],
+                              expiry_date: datacols[6],
+                              strike_price: datacols[7],
+                              option_type: datacols[8],
+                              security_name: datacols[53],
+                            }
+                            let nseRes = await CDContract.create(obj);
+                          }
+                        }
+                        break;
+                    case 'FO' :
+                        marketType = FOContract;
+                        break;
+                }
+                // console.log("File data ----> ",(reqdata.file.buffer).toString('binary'));
+                //console.log("File data elements ----> ", filedata.length);
+                return resolve(that.ResponseController.successResponse(null,'File uploaded Successfully.'));
+                
+            } catch(e){
+                return reject(e);
+            }
+        });
+    }    
+
 }
 
 module.exports = SummaryTradeData;

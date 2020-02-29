@@ -25,4 +25,12 @@ export class SummaryService {
   	getFiltersMetadata(requestObj) {
     	return this.http.get(`${this.API_URL}filters/metadata?token=${requestObj.token}&marketType=${requestObj.marketType}`);
   	}
+    postFile(requestObj,fileToUpload: File) {
+        const endpoint = `${this.API_URL}uploadCsv?token=${requestObj.token}&marketType=${requestObj.marketType}`;
+        const formData: FormData = new FormData();
+        formData.append('filedata', fileToUpload, fileToUpload.name);
+        return this.http.post(endpoint, formData);
+          // .map(() => { return true; })
+          // .catch((e) => this.handleError(e));
+    }
 }

@@ -33,12 +33,12 @@ class NseMiddleware {
 	            'token': reqToken
 	        }
 	    })
-	    console.log("Middleware userinfo result ----> ",userinfo,userinfo.length)
+	    //console.log("Middleware userinfo result ----> ",userinfo,userinfo.length)
 	    if(!userinfo || !userinfo.length){
 	    	 res.send(that.ResponseController.unauthorisesdErrorResponse())	// token dosent exist
 	    }
 	    userinfo = userinfo[0];
-	    console.log("User Info In Middleware ----> ", userinfo, new Date(userinfo.token_ttl))
+	    //console.log("User Info In Middleware ----> ", userinfo, new Date(userinfo.token_ttl))
 	    let prevTtl = (userinfo.token_ttl && new Date(userinfo.token_ttl) != 'Invalid Date') ? new Date(userinfo.token_ttl) : null;
 	    console.log("Token Valid ? ",prevTtl > new Date(), prevTtl, new Date(), " | after adding 15min ---> ",moment(prevTtl).add(15, 'minutes').format('YYYY-MM-DD HH:mm:ss'))
 	    if(!prevTtl || prevTtl <= new Date()){
