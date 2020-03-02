@@ -15,6 +15,7 @@ import { ChangePasswordComponent } from './change-password/change-password.compo
 import { HelpComponent } from './help/help.component';
 import { LogoutComponent } from './logout/logout.component';
 import {LoaderModule} from './loader/loader.module';
+import {NotificationModule} from './notification/notification.module';
 // import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 
 
@@ -38,7 +39,9 @@ import {LoaderModule} from './loader/loader.module';
     AppRoutingModule,
     FormsModule,
     HttpClientModule,
-    LoaderModule
+    LoaderModule,
+    NotificationModule
+    
     // InfiniteScrollModule
   ],
   providers: [],

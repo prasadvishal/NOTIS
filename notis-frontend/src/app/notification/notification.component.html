@@ -1,0 +1,10 @@
+<div class="msg" *ngIf="message$ | async; let message">
+    <div class="msg-box">
+        <!-- <div>
+            <img class="icon" width="30" height="30" src="assets/images/info.png">
+        </div> -->
+        <div class="message">
+            {{message}}
+        </div>
+    </div>
+</div>

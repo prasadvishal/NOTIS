@@ -355,7 +355,6 @@ class SummaryTradeData{
                         return resolve(that.ResponseController.successResponse(null,'Backup Successfull. Email Id missing, File stored on Server.'));
                      }
                   });
-                resolve("done");
             } catch(e){
                 reject(e);
             }

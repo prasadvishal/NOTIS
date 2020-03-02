@@ -7,6 +7,7 @@ import * as $ from 'jquery';
 import { SummaryService } from '../services/summary/summary.service';
 import { Constants } from '../app.constants';
 import { LoaderService } from '../loader/services/loader.service';
+import { NotificationService } from '../notification/services/notification.service';
 
 
 @Component({
@@ -35,11 +36,14 @@ export class SummaryComponent implements OnInit {
     fileError = true;
 
     @ViewChild('transactionBackupModal', null) transactionBackupModal :ElementRef;
+    @ViewChild('tradeFilterModal', null) tradeFilterModal :ElementRef;
+    @ViewChild('uploadFileModal', null) uploadFileModal :ElementRef;
   	constructor( 
   		private fb: FormBuilder,
   		private fltrfrm: FormBuilder,
       private summaryService : SummaryService,
       private loaderService:LoaderService,
+      private notificationService: NotificationService,
   		private router: Router)
   	 { }
 
@@ -101,14 +105,20 @@ export class SummaryComponent implements OnInit {
     uploadCsvFile() {
 
         if(this.fileToUpload){
+
+          this.loaderService.show();
             this.summaryService.postFile({marketType: this.marketType, token: localStorage.getItem('token')} ,this.fileToUpload).subscribe((data: any) => {
               if(data && data.code && data.code == 200){
-                alert("File Sucessfully Uploaded.");
+                this.notificationService.show("File Sucessfully Uploaded.");
+                this.closeUploadFileModal()
+                //alert("File Sucessfully Uploaded.");
               }
               }, error => {
-                console.log("Error in uploading File: ",error);
-                alert(error);
+                //console.log("Error in uploading File: ",error);
+                this.notificationService.show("Error in uploading File.");
+                //alert(error);
               });
+              this.loaderService.hide();
         }
         //$("#upload-file-modal").show();
     };
@@ -150,12 +160,18 @@ export class SummaryComponent implements OnInit {
     };
 
     closeTradeFilterModal() {
-        console.log("Inside showTradeFilterModal()");
-        $("#trade-filter-modal").hide();
+      this.tradeFilterModal.nativeElement.click();
+        // console.log("Inside showTradeFilterModal()");
+        // $("#trade-filter-modal").hide();
     };
 
+    closeUploadFileModal() {
+      this.uploadFileModal.nativeElement.click();
+  };
+
 	resetFilters(){
-    this.filterform.reset()
+    this.filterform.reset();
+    this.notificationService.show("Filters Removed Succesfully.")
 		this.getTradeData();	
 	}
 
@@ -187,11 +203,12 @@ export class SummaryComponent implements OnInit {
           {
             this.tradeDataList.push(Object.values(trade))
 		  }
-		      console.log("Succfull filtered")
+          console.log("Succfull filtered");
+          this.closeTradeFilterModal();
 		      //$("#trade-filter-modal").hide();
         }
         else if(data.code == 401){
-          alert("Session Expired. Login Again.");
+          this.notificationService.show("Session Expired. Login Again.");
           console.log("Session Expired. Login Again.")
           localStorage.setItem('isLoggedIn', 'false');
           localStorage.setItem('userData', '');
@@ -227,8 +244,9 @@ export class SummaryComponent implements OnInit {
             this.tradeDataList.push(Object.values(trade))
           }
         }else if(data.code == 401){
-            alert("Session Expired. Login Again.");
-            console.log("Session Expired. Login Again.")
+            this.notificationService.show("Session Expired. Login Again.")
+            //alert("Session Expired. Login Again.");
+            //console.log("Session Expired. Login Again.")
             localStorage.setItem('isLoggedIn', 'false');
             localStorage.setItem('userData', '');
             localStorage.setItem('marketType', '');
@@ -258,7 +276,8 @@ export class SummaryComponent implements OnInit {
         //console.log("Filter Object: ",filterObj);
         this.summaryService.getTradeDataBackup({marketType: this.marketType, token: localStorage.getItem('token'), filters:filterObj}).subscribe((data: any) => {
         console.log("getTradeData Response ----------> ",data);
-        alert(data.msg);
+        this.notificationService.show(data.msg);
+        //alert(data.msg);
         this.loaderService.hide();
         this.closeTransactionBackupModal();
         })
@@ -277,9 +296,10 @@ export class SummaryComponent implements OnInit {
           this.userIds = data.data.userinfo.map(x => (x.user_id));
           this.branches = data.data.branches.map(x => (x.branch));
           this.cliAccounts = data.data.cliAccounts.map(x => (x.cli_act_no));
-        }else if(data.code == 401){
-            alert("Session Expired. Login Again.");
-            console.log("Session Expired. Login Again.")
+        }else if(data.code == 401){ 
+
+            this.notificationService.show("Session Expired. Login Again.");
+            //console.log("Session Expired. Login Again.")
             localStorage.setItem('isLoggedIn', 'false');
             localStorage.setItem('userData', '');
             localStorage.setItem('marketType', '');
