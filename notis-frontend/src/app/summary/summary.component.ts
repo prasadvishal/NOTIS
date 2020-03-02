@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { saveAs } from "file-saver";
@@ -33,6 +33,8 @@ export class SummaryComponent implements OnInit {
     fileToUpload: File = null;
     fileErrorMsg = null;
     fileError = true;
+
+    @ViewChild('transactionBackupModal', null) transactionBackupModal :ElementRef;
   	constructor( 
   		private fb: FormBuilder,
   		private fltrfrm: FormBuilder,
@@ -140,8 +142,10 @@ export class SummaryComponent implements OnInit {
     };
 
     closeTransactionBackupModal() {
-        console.log("Inside showTransactionBackupModal()");
-        $("#transaction-backup-modal").hide();
+        // console.log("Inside showTransactionBackupModal()");
+        //$("#transaction-backup-modal").hide();
+        // $("#transaction-backup-modal").hide();
+        this.transactionBackupModal.nativeElement.click();
     };
 
     closeTradeFilterModal() {
@@ -155,6 +159,7 @@ export class SummaryComponent implements OnInit {
 	}
 
     getFilteredData() {
+        this.hideLoader = false;
         console.log("Filter Form --> ",this.filterform.value);
         let filterObj = {};
         for(let key of Object.keys(this.filterform.value))
@@ -180,7 +185,7 @@ export class SummaryComponent implements OnInit {
           for(let trade of tradeDataListRes)
           {
             this.tradeDataList.push(Object.values(trade))
-		      }
+		  }
 		      console.log("Succfull filtered")
 		      //$("#trade-filter-modal").hide();
         }
@@ -254,7 +259,7 @@ export class SummaryComponent implements OnInit {
         console.log("getTradeData Response ----------> ",data);
         alert(data.msg);
         this.hideLoader = true;
-
+        this.closeTransactionBackupModal();
         })
     };
 
