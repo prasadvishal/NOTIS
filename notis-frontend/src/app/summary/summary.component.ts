@@ -6,6 +6,7 @@ import 'rxjs/Rx' ;
 import * as $ from 'jquery';
 import { SummaryService } from '../services/summary/summary.service';
 import { Constants } from '../app.constants';
+import { LoaderService } from '../loader/services/loader.service';
 
 
 @Component({
@@ -29,7 +30,6 @@ export class SummaryComponent implements OnInit {
     cliAccounts: Array<string> = [];
 	branches: Array<string> = [];
     marketType : string;
-    hideLoader: boolean = true ;
     fileToUpload: File = null;
     fileErrorMsg = null;
     fileError = true;
@@ -39,6 +39,7 @@ export class SummaryComponent implements OnInit {
   		private fb: FormBuilder,
   		private fltrfrm: FormBuilder,
       private summaryService : SummaryService,
+      private loaderService:LoaderService,
   		private router: Router)
   	 { }
 
@@ -159,7 +160,7 @@ export class SummaryComponent implements OnInit {
 	}
 
     getFilteredData() {
-        this.hideLoader = false;
+        this.loaderService.show();
         console.log("Filter Form --> ",this.filterform.value);
         let filterObj = {};
         for(let key of Object.keys(this.filterform.value))
@@ -201,7 +202,7 @@ export class SummaryComponent implements OnInit {
         else{
           console.log("Error / No Data");
         }
-        this.hideLoader = true;
+        this.loaderService.hide();
 
         })
     };
@@ -209,7 +210,7 @@ export class SummaryComponent implements OnInit {
 
     getTradeData(){
       this.marketType = localStorage.getItem('marketType');
-      this.hideLoader = false;
+      this.loaderService.show();
 	  console.log("getTradeData() TOKEN -------> ",localStorage.getItem('token'))
       this.summaryService.getTradeData({marketType: this.marketType, token: localStorage.getItem('token')}).subscribe((data: any) => {
         console.log("getTradeData Response ----------> ",data);
@@ -237,7 +238,7 @@ export class SummaryComponent implements OnInit {
         else{
           console.log("Error / No Data");
         }
-        this.hideLoader = true;
+        this.loaderService.hide();
 
       })
     } ; 
@@ -258,7 +259,7 @@ export class SummaryComponent implements OnInit {
         this.summaryService.getTradeDataBackup({marketType: this.marketType, token: localStorage.getItem('token'), filters:filterObj}).subscribe((data: any) => {
         console.log("getTradeData Response ----------> ",data);
         alert(data.msg);
-        this.hideLoader = true;
+        this.loaderService.hide();
         this.closeTransactionBackupModal();
         })
     };
@@ -266,7 +267,7 @@ export class SummaryComponent implements OnInit {
 
     getFiltersMetadata(){
       this.marketType = localStorage.getItem('marketType');
-      this.hideLoader = false;
+      this.loaderService.show();
       console.log("getFiltersMetadata() TOKEN -------> ",localStorage.getItem('token'))
       this.summaryService.getFiltersMetadata({marketType: this.marketType, token: localStorage.getItem('token')}).subscribe((data: any) => {
         console.log("getFiltersMetadata Response ----------> ",data);
@@ -288,7 +289,7 @@ export class SummaryComponent implements OnInit {
         else{
           console.log("Error / No Data");
         }
-        this.hideLoader = true;
+        this.loaderService.hide();
 
       })
     } ;   

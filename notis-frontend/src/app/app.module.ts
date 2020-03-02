@@ -14,6 +14,7 @@ import { ProfileComponent } from './profile/profile.component';
 import { ChangePasswordComponent } from './change-password/change-password.component';
 import { HelpComponent } from './help/help.component';
 import { LogoutComponent } from './logout/logout.component';
+import {LoaderModule} from './loader/loader.module';
 // import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 
 
@@ -37,6 +38,7 @@ import { LogoutComponent } from './logout/logout.component';
     AppRoutingModule,
     FormsModule,
     HttpClientModule,
+    LoaderModule
     // InfiniteScrollModule
   ],
   providers: [],

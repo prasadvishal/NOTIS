@@ -1,5 +1,4 @@
- <div *ngIf="!hideLoader" class="loader"><img style="width: 70px;" src="assets/images/loader.gif" alt="loading">
- </div>
+
  	<div class = "card">
  		<div class="card-block">
  			<div class="row">
@@ -129,7 +128,7 @@
 </div>
 
 <!-- Video Modal START -->
-<div class="modal fade" id="transaction-backup-modal" data-reveal data-reset-on-close="true">
+<div class="modal fade" id="transaction-backup-modal" data-reveal data-reset-on-close="true" #transactionBackupModal>
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -308,7 +307,7 @@
 </div>
 
 
-<div class="modal fade" id="trade-filter-modal" data-backdrop="static" data-keyboard="false" data-reveal data-reset-on-close="true">
+<div class="modal fade" id="trade-filter-modal" data-reveal data-reset-on-close="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -398,41 +397,7 @@
                            <label for="endTimeFilter">End Time:</label>
                             <input type="time" id="endTimeFilter" name="endTimeFilter">
                         </div>
-
-<!--                         <div class="modal-field col-sm-3" style="padding: 0;">
-                            <label class="radio-inline">
-                                <input type="radio" name="timmerCheck" value="1" formControlName="timmerCheck">Timmer
-                            </label>
-                        </div>
-
-                        <div class="modal-field col-sm-3" style="padding: 0;">
-                           <label for="timeIntervalFilter">Time Interval:</label>
-                            <input type="text" id="timeIntervalFilter" name="timeIntervalFilter" value="00:00:00">
-                        </div> -->
                     </div>
-
-                    <!-- Row 5 <Select Dropdowns BranchId UserId CliAccountId> -->
-<!--                     <div class='row'>
-                        <div class="modal-field col-sm-3" style="padding: 0;">
-                           <label for="filePath">Path:</label>
-                            <input type="text" id="filePath" name="filePath" formControlName="filePath">
-                        </div>
-
-                        <div class="modal-field col-sm-3" style="padding: 0;">
-                           <label for="fileName">File Name:</label>
-                            <input type="text" id="fileName" name="fileName" formControlName="fileName">
-                        </div>
-
-                        <div class="modal-field col-sm-3" style="padding: 0;">
-                            <label class="radio-inline">
-                                <input type="radio" name="includeDateInFilename" value="1" formControlName="includeDateInFilename">Append Date To File Name
-                            </label>
-                        </div>
-
-                        <div class="modal-field col-sm-3" style="padding: 0;">
-                            <button class="icon-btn" style="width:100%;"><i class="ti-pencil-alt"></i>Change</button>
-                        </div>
-                    </div> -->
                     <div class="row">
                         <fieldset>
                             <legend>Trade</legend>
@@ -460,16 +425,6 @@
                             </div>
                         </fieldset>
                     </div>
-<!--                     <div class="row">
-                        <fieldset>
-                            <legend>Options</legend>
-                            <div class="modal-field col">
-                                <label class="radio-inline">
-                                    <input type="radio" name="tradeType" value="buy" formControlName="tradeType">Include CTCL Id in Transaction Backup File
-                                </label>
-                            </div>
-                        </fieldset>
-                    </div> -->
                 </form>
                 <div class="row">
                     <div class="col-sm-3">
