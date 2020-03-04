@@ -41,6 +41,7 @@ let nseDataModel = DBConnection.define('notis_fo', {
     fill6: { type: Sequelize.STRING, allowNull: true },
     fill7: { type: Sequelize.STRING, allowNull: true },
     fill8: { type: Sequelize.STRING, allowNull: true },
+    security: { type: Sequelize.STRING, allowNull: true},
     nseMainDataId: {
         type: Sequelize.INTEGER,
         references: {

@@ -3,8 +3,8 @@ let Sequelize = require('sequelize');
 
 let nseDataModel = DBConnection.define('branch_filters', {
     id: { type: Sequelize.INTEGER, autoIncrement: true, primaryKey: true},
-    branch: { type: Sequelize.STRING, allowNull: false },
-    market_type: { type: Sequelize.STRING, allowNull: false },
+    branch: { type: Sequelize.STRING, allowNull: false},
+    market_type: { type: Sequelize.STRING, allowNull: false},
     created_at: { type: Sequelize.DATE, allowNull: false, defaultValue: Sequelize.NOW },
 
 }, {

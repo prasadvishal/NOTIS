@@ -43,6 +43,7 @@ let nseDataModel = DBConnection.define('notis_cd', {
     fill6: { type: Sequelize.STRING, allowNull: true },
     fill7: { type: Sequelize.STRING, allowNull: true },
     fill8: { type: Sequelize.STRING, allowNull: true },
+    security: { type: Sequelize.STRING, allowNull: true },
     // actTrdNo: { type: Sequelize.STRING, allowNull: false},
     // actDtTm: { type: Sequelize.STRING, allowNull: false },
     // actId: { type: Sequelize.STRING, allowNull: false },

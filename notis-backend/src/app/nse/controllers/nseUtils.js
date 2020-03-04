@@ -15,6 +15,9 @@ let SymbolFilterModel = require('../models/SymbolFilterModel');
 let UserIdFilterModel = require('../models/UserIdFilterModel');
 let CliAccountFilterModel = require('../models/CliAccountFilterModel');
 let BranchFilterModel = require('../models/BranchFilterModel');
+let CDContractModel = require('../models/CDContract');
+let FOContractModel = require('../models/FOContract');
+let CMSecurity = require('../models/CMSecurity');
 let moment = require('moment');
 let Sequelize = require('sequelize');
 const Op = Sequelize.Op;
@@ -72,7 +75,9 @@ class NseUtils{
             }
             try{ 
                 let nseDataResponse = await this.makePythonRequest(data);
-
+                if(!nseDataResponse.status){
+                    reject(null)
+                }
                 let nseData = {
                     nseDataRequest: data,
                     nseDataResponse: nseDataResponse
@@ -117,10 +122,9 @@ class NseUtils{
             console.log(obj);
             try{
                 let nseRes = await NseResModel.create(obj);
-                console.log("nseData.data.tradesInquiry.split('^').lengt", nseData.data.tradesInquiry.split('^').length)
                 if(nseData.status == 'success' && !this.utils.isEmpty(nseData.data.tradesInquiry) && nseData.data.tradesInquiry.split('^').length > 2){
                     if(!(this.utils.isEmpty(nseData)) &&!(this.utils.isEmpty(nseData.data))){
-                        await insertIntoNseFilters(nseData, tradeData.name);
+                        await this.insertIntoNseFilters(nseData, tradeData.name);
 
                         switch(tradeData.name){
                             case 'notis_cm': 
@@ -153,7 +157,7 @@ class NseUtils{
     }
 
     insertIntoNseFilters(nseData, tradeName){
-        return new Promise((resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
             let nseCsvData = [];
             let nseCsvRaw = nseData.data.tradesInquiry.split('^');
             for(var i = 1; i<nseCsvRaw.length ; i++){
@@ -179,9 +183,75 @@ class NseUtils{
                         var symbol = dataPoints[23];
                         var marketType = 'FO';
                         break;
-                }try{ 
-                    BranchFilterModel.create({branch: branchCode, market_type: marketType});
+                }try { 
+                    let dataSetBranch = await BranchFilterModel.findAll(
+                        {where: {
+                            branch: branchCode,
+                            market_type: marketType
+                        }
+                    })
+                    if(!dataSetBranch.length){
+                        await BranchFilterModel.create({
+                            branch: branchCode,
+                                market_type: marketType
+                        })
+                    } 
+
+                    let dataSetCli = await CliAccountFilterModel.findAll(
+                    {
+                        where: {
+                            cli_act_no: cliActNo,
+                            market_type: marketType
+                        }
+                    })
+                    if(!dataSetCli.length){
+                        await CliAccountFilterModel.create({
+                            cli_act_no: cliActNo,
+                            market_type: marketType
+                        })
+                    }
+
+                    let dataSetUser = await UserIdFilterModel.findAll({
+                        where: {
+                            user_id: userId,
+                            market_type: marketType
+                        }
+                    })
+                    if(!dataSetUser.length){
+                        await UserIdFilterModel.create({
+                            user_id: userId,
+                            market_type: marketType
+                        })
+                    }
+
+                    let dataSetSer = await SeriesFilterModel.findAll({
+                        where: {
+                            series: series,
+                            market_type: marketType
+                        }
+                    })
+                    if(!dataSetSer.length){
+                        await SeriesFilterModel.create({
+                            series: series,
+                            market_type: marketType
+                        })
+                    }
+
+                    let dataSetSymbol = await SymbolFilterModel.findAll({
+                        where: {
+                            symbol: symbol,
+                            market_type: marketType
+                        }
+                    })
+                    if(!dataSetSymbol.length){
+                        await SymbolFilterModel.create({
+                            symbol: symbol,
+                            market_type: marketType
+                        })
+                    }
                     resolve(null)
+
+                    
                 } catch(e){
                     console.log("========>>>>>>>>>>", e);
                     reject(e);
@@ -192,69 +262,92 @@ class NseUtils{
 
     insertInCM(nseData, nseMainDataId){
         return new Promise( async (resolve, reject) =>{ 
-        let nseCsvData = [];
-        let nseCsvRaw = nseData.data.tradesInquiry.split('^');
-        // console.log("UUUUUUUUUUUUUUUUUUUU", nseCsvRaw.length)
-        for(var i = 1; i<nseCsvRaw.length ; i++){
-            // console.log("i ---> ",i,"nseCsvData",nseCsvRaw.length, nseCsvRaw[i].split(',').length);
-            let dataPoints = nseCsvRaw[i].split(',');
-            let dataPointObj = {
-                seqNo: dataPoints[0],
-                // mktSts: dataPoints[1],
-                mkt: dataPoints[1],
-                trdNo: dataPoints[2],
-                trdTm: dataPoints[3],
-                tkn: dataPoints[4],
-                trdQty: dataPoints[5],
-                trdPrc: dataPoints[6],
-                bsFlg: dataPoints[7],
-                ordNo: dataPoints[8],
-                brnCd: dataPoints[9],
-                usrId: dataPoints[10],
-                proCli: dataPoints[11],
-                cliActNo: dataPoints[12],
-                cpCd: dataPoints[13],
-                remarks: dataPoints[14],
-                actTyp: dataPoints[15],
-                TCd: dataPoints[16],
-                ordTm: dataPoints[17],
-                mktTyp: dataPoints[18],
-                aucNo: dataPoints[19],
-                stpTyp: dataPoints[20],
-                oppBrokerCd: dataPoints[21],
-                trdTrigPrc: dataPoints[22],
-                ctclId: dataPoints[23],
-                ordInst: dataPoints[24],
-                secIdentifier: dataPoints[25],
-                sym: dataPoints[26],
-                ser: dataPoints[27],
-                inst: dataPoints[28],
-                expDt: dataPoints[29],
-                strPrc: dataPoints[30],
-                optType: dataPoints[31],
-                fill1: dataPoints[32],
-                fill2: dataPoints[33],
-                fill3: dataPoints[34],
-                fill4: dataPoints[35],
-                fill5: dataPoints[36],
-                fill6: dataPoints[37],
-                fill7: dataPoints[38],
-                fill8: dataPoints[39],
-                // errCd: dataPoints[0],
-                // seqNo: dataPoints[1],
-                // actTrdNo: dataPoints[2],
-                // actDtTm: new Date(dataPoints[3]),
-                // actId: dataPoints[4],
-                // tradeType: tradeData.name,
-                nseMainDataId: nseMainDataId
+            try{ 
+            let nseCsvData = [];
+            let nseCsvRaw = nseData.data.tradesInquiry.split('^');
+            // console.log("UUUUUUUUUUUUUUUUUUUU", nseCsvRaw.length)
+            for(var i = 1; i<nseCsvRaw.length ; i++){
+                // console.log("i ---> ",i,"nseCsvData",nseCsvRaw.length, nseCsvRaw[i].split(',').length);
+                let dataPoints = nseCsvRaw[i].split(',');
+                let dataPointObj = {
+                    seqNo: dataPoints[0],
+                    // mktSts: dataPoints[1],
+                    mkt: dataPoints[1],
+                    trdNo: dataPoints[2],
+                    trdTm: dataPoints[3],
+                    tkn: dataPoints[4],
+                    trdQty: dataPoints[5],
+                    trdPrc: dataPoints[6],
+                    bsFlg: dataPoints[7],
+                    ordNo: dataPoints[8],
+                    brnCd: dataPoints[9],
+                    usrId: dataPoints[10],
+                    proCli: dataPoints[11],
+                    cliActNo: dataPoints[12],
+                    cpCd: dataPoints[13],
+                    remarks: dataPoints[14],
+                    actTyp: dataPoints[15],
+                    TCd: dataPoints[16],
+                    ordTm: dataPoints[17],
+                    mktTyp: dataPoints[18],
+                    aucNo: dataPoints[19],
+                    stpTyp: dataPoints[20],
+                    oppBrokerCd: dataPoints[21],
+                    trdTrigPrc: dataPoints[22],
+                    ctclId: dataPoints[23],
+                    ordInst: dataPoints[24],
+                    secIdentifier: dataPoints[25],
+                    sym: dataPoints[26],
+                    ser: dataPoints[27],
+                    inst: dataPoints[28],
+                    expDt: dataPoints[29],
+                    strPrc: dataPoints[30],
+                    optType: dataPoints[31],
+                    fill1: dataPoints[32],
+                    fill2: dataPoints[33],
+                    fill3: dataPoints[34],
+                    fill4: dataPoints[35],
+                    fill5: dataPoints[36],
+                    fill6: dataPoints[37],
+                    fill7: dataPoints[38],
+                    fill8: dataPoints[39],
+                    // errCd: dataPoints[0],
+                    // seqNo: dataPoints[1],
+                    // actTrdNo: dataPoints[2],
+                    // actDtTm: new Date(dataPoints[3]),
+                    // actId: dataPoints[4],
+                    // tradeType: tradeData.name,
+                    nseMainDataId: nseMainDataId
+                }
+                let securityDetails = await CMSecurity.findAll({
+                            where: {
+                                symbol: dataPointObj.sym,
+                                series: dataPointObj.ser
+                            },
+                            raw: true
+                        })
+                dataPointObj.security = securityDetails.length ? securityDetails[0].security_name : null
+                let cmdata = await NseCM3.findAll({
+                    where: {seqNo: dataPoints.seqNo},
+                    raw: true
+                })
+                console.log("##########wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww", cmdata.length)
+                if(!cmdata.length){
+                    await NseCM3.create(dataPointObj)
+                    resolve(null);
+
+                } else{
+                    resolve(null);
+
+                }
+                // nseCsvData.push(dataPointObj);
             }
-            nseCsvData.push(dataPointObj);
-            console.log("============");
+            // let re = await NseCM3.bulkCreate(nseCsvData);
+        } catch(e){
+            reject(e);
         }
-        let re = await NseCM3.bulkCreate(nseCsvData);
-        console.log("*****!!!!!!!!!!*******", nseCsvData.length);
-        resolve(re);
-    })
+            // console.log("*****!!!!!!!!!!*******", nseCsvData.length);
+        })
     }
 
     insertInCD(nseData, nseMainDataId){
@@ -263,7 +356,8 @@ class NseUtils{
                 nseData = JSON.parse(JSON.stringify(nseData));
                 let nseCsvData = [];
                 let nseCsvRaw = nseData.data.tradesInquiry.split('^');
-                console.log("CDDDDDDDDDDDDD", nseCsvRaw.length)
+                console.log("=======================777777777777777777777777777777777777", nseCsvRaw);
+
                 for(var i = 1; i<nseCsvRaw.length ; i++){
                     // console.log("i ---> ",i,"nseCsvData",nseCsvRaw.length, nseCsvRaw[i].split(',').length);
                     let dataPoints = nseCsvRaw[i].split(',');
@@ -307,7 +401,19 @@ class NseUtils{
                         fill8: dataPoints[39],
                         nseMainDataId: nseMainDataId
                     }
+                    let securityDetails = await CDContractModel.findAll({
+                        where: {
+                            instrument_type: dataPointObj.inst,
+                            symbol: dataPointObj.sym,
+                            expiry_date: dataPointObj.expDt,
+                            strike_price: dataPointObj.strPrc,
+                            option_type: dataPointObj.optType
+                        },
+                        raw: true
+                    })
+                    dataPointObj.security = securityDetails.length ? securityDetails[0].security_name : null
                     nseCsvData.push(dataPointObj);
+                    
                 }
                 let re = await NseCD.bulkCreate(nseCsvData);
                 console.log("*****!!!!!!!!!!*******", nseCsvData.length);
@@ -369,6 +475,18 @@ class NseUtils{
                         // fill8: dataPoints[39],
                         nseMainDataId: nseMainDataId
                     }
+                    let securityDetails = await FOContractModel.findAll({
+                        where: {
+                            instrument_type: dataPointObj.inst,
+                            symbol: dataPointObj.sym,
+                            expiry_date: dataPointObj.expDt,
+                            strike_price: dataPointObj.strPrc,
+                            option_type: dataPointObj.optType
+                        },
+                        raw: true
+                    })
+                    dataPointObj.security = securityDetails.length ? securityDetails[0].security_name : null
+                    
                     nseCsvData.push(dataPointObj);
                 }
                 console.log("**********", nseCsvData);
