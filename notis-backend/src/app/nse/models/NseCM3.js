@@ -1,7 +1,7 @@
 
 let Sequelize = require('sequelize');
 
-let nseDataModel = DBConnection.define('notis_cm_1.3', {
+let nseDataModel = DBConnection.define('notis_cm', {
     id: { type: Sequelize.INTEGER, autoIncrement: true, primaryKey: true},
     // tradeType: { type: Sequelize.STRING, allowNull: false },
     // errCd: { type: Sequelize.STRING, allowNull: false },
@@ -33,10 +33,10 @@ let nseDataModel = DBConnection.define('notis_cm_1.3', {
     secIdentifier: { type: Sequelize.STRING, allowNull: true },
     sym: { type: Sequelize.STRING, allowNull: true },
     ser: { type: Sequelize.STRING, allowNull: true },
-    inst: { type: Sequelize.STRING, allowNull: true },
-    expDt: { type: Sequelize.INTEGER, allowNull: true },
+    secName: { type: Sequelize.STRING, allowNull: true },
+    IntrumentType: { type: Sequelize.INTEGER, allowNull: true },
     strPrc: { type: Sequelize.INTEGER, allowNull: true },
-    optType: { type: Sequelize.STRING, allowNull: true },
+    // optType: { type: Sequelize.STRING, allowNull: true },
     fill1: { type: Sequelize.STRING, allowNull: true },
     fill2: { type: Sequelize.STRING, allowNull: true },
     fill3: { type: Sequelize.STRING, allowNull: true },
@@ -45,6 +45,7 @@ let nseDataModel = DBConnection.define('notis_cm_1.3', {
     fill6: { type: Sequelize.STRING, allowNull: true },
     fill7: { type: Sequelize.STRING, allowNull: true },
     fill8: { type: Sequelize.STRING, allowNull: true },
+    security: { type: Sequelize.STRING, allowNull: true },
     // actTrdNo: { type: Sequelize.STRING, allowNull: false},
     // actDtTm: { type: Sequelize.STRING, allowNull: false },
     // actId: { type: Sequelize.STRING, allowNull: false },

@@ -3,6 +3,7 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 // import { AuthService } from './../../auth/auth.service';
 import { Router } from '@angular/router';
 import { LoginService } from '../services/login/login.service';
+import { NotificationService } from '../notification/services/notification.service';
 // import { LoginResultModel } from './model/LoginResultModel';
 //import * as $ from 'jquery'
 
@@ -27,7 +28,8 @@ export class LoginComponent implements OnInit {
     private fb: FormBuilder,         	// {3}
     //private authService: AuthService, // {4}
     private loginService: LoginService, 
-    private router: Router
+    private router: Router,
+    private notificationService: NotificationService,
   ) { }
 
 
@@ -65,20 +67,36 @@ export class LoginComponent implements OnInit {
       if(loginData.marketId &&  this.marketIds.includes(loginData.marketId) && loginData.memberId =='111'){
         this.hideLoader = false;
 
-        this.loginService.userLogin({user_name: loginData.userId, password:loginData.password}).subscribe((data: any) => {
+        this.loginService.userLogin({user_name: loginData.userId, password:loginData.password, market:loginData.marketId}).subscribe((data: any) => {
           if(data.code == 200 && data.data.token){
-            localStorage.setItem('isLoggedIn', 'true');
-            localStorage.setItem('token', data.data.token);
-            localStorage.setItem('userData', JSON.stringify(data.data));
-            localStorage.setItem('marketType', loginData.marketId);
-	          console.log("login() TOKEN -------> ",localStorage.getItem('token'))
-
-            this.router.navigate(['/summary']);
+            if(data.data.permitted_markets){
+              let allowed_markets = data.data.permitted_markets.split(',');
+              if(!allowed_markets || allowed_markets.length < 1 || !allowed_markets.includes(loginData.marketId)){
+                  this.notificationService.show("You don't have Rights to view this Market. Please connect Admin Team for viewing Rights.");
+                  this.loginbtn = 'Login';
+                  localStorage.setItem('isLoggedIn', 'false');
+                  localStorage.setItem('userData', "");
+              }else{
+                  localStorage.setItem('isLoggedIn', 'true');
+                  localStorage.setItem('token', data.data.token);
+                  localStorage.setItem('userData', JSON.stringify(data.data));
+                  localStorage.setItem('marketType', loginData.marketId);
+                  console.log("login() TOKEN -------> ",localStorage.getItem('token'))
+                  this.router.navigate(['/summary']);
+              }
+            }
+            else{
+              this.notificationService.show("You don't have any Market assigned, Please connect Admin Team for viewing Rights.");
+              this.loginbtn = 'Login';
+              localStorage.setItem('isLoggedIn', 'false');
+              localStorage.setItem('userData', "");
+            }
           }else{
              this.loginbtn = 'Login';
              localStorage.setItem('isLoggedIn', 'false');
              localStorage.setItem('userData', "");
              this.message =  data.error || data.msg;
+             this.notificationService.show(data.error || data.msg);
           }
           this.hideLoader = true;
 

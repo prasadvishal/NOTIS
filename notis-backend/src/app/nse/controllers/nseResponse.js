@@ -40,11 +40,11 @@ class NseResponse {
     	}
         return errResp;
     }
-    async forbiddenErrorResponse() {
+    async forbiddenErrorResponse(msg=null) {
     	let errResp = {
     		'code' : Constants.FORBIDDEN_ERROR.CODE,
     		'status': Constants.FORBIDDEN_ERROR.STATUS,
-    		'error' : "Not Allowed to Make this Request."
+    		'error' : msg ? msg : "Not Allowed to Make this Request."
     	}
         return errResp;
     }

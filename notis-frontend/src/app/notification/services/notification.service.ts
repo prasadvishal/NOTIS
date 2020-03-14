@@ -13,7 +13,7 @@ export class NotificationService {
         this.message$.next(message);
         setTimeout(() => {
             this.close();
-        }, 20000);
+        }, 4000);
     }
 
     private close() {

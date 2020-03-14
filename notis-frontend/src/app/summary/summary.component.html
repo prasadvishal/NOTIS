@@ -34,33 +34,36 @@
 	                    </div>
                 	</form>
                 </div> -->
-                <div class="col">
+                <div class="col-sm-2">
                     <div class="label">Total Buy Value</div>
                     <div class="form-group">
                     	<span class="form-control">{{totalBuyValue}}</span>
                     </div>
                 </div>
-                <div class="col">
+                <div class="col-sm-2">
                     <div class="label">Total Sell Value</div>
                     <div class="form-group">
                         <span class="form-control">{{totalSellValue}}</span>
                     </div>
                 </div>
-                <div class="col">
+                <div class="col-sm-2">
                     <div class="label">Total Trade Value</div>
                     <div class="form-group">
                         <span class="form-control">{{totalTradeValue}}</span>
                     </div>
                 </div>
                 
-                <div class="col">
+                <div class="col-sm-2">
                     <div class="label">Total Trades</div>
                     <div class="form-group">
                         <span class="form-control">{{totalTrade}}</span>
                     </div>
                 </div>
-                <div class="col">
-                    <button type="button" class="btn btn-primary" (click)="getFilteredData()">Refresh</button>
+                <div class="col-sm-2">
+                    <button type="button" class="btn btn-primary" style="width: 100%;" (click)="getFilteredData()">Refresh</button>
+                </div>
+                <div class="col-sm-2">
+                    <button type="button" class="btn btn-primary" style="width: 100%;" (click)="showSwitchMarketModal()">Switch Market</button>
                 </div>
            
         	</div>
@@ -72,51 +75,11 @@
                     <thead>
                         <tr>
                             <th style="text-align: center; " *ngFor="let key of headers"> {{key}} </th>
-     <!--                        <th style="text-align: center;">Market<span class="fa fa-shopping-bag" aria-hidden="true"></span></th>
-                            <th style="text-align: center;">Trade No<span class="fa fa-sort"></span></th>
-                            <th style="text-align: center;">Trade Time<span class="fa fa-clock-o" aria-hidden="true"></span></th> 
-                            <th style="text-align: center; ">Symbol<span class="fa fa-sort"></span></th>
-                            <th style="text-align: center; ">Series<span class="fa fa-sort"></span></th>
-                            <th style="text-align: center; ">Quantity</th>
-                            <th style="text-align: center; ">Price</th>
-                            <th style="text-align: center; ">Trade Value</th>
-                            <th style="text-align: center; ">Buy/Sell</th>
-                            <th style="text-align: center; ">Order No</th>
-                            <th style="text-align: center; ">Branch No</th>
-                            <th style="text-align: center; ">User Id</th>
-                            <th style="text-align: center; ">Client Type</th>
-                            <th style="text-align: center; ">Client A/C</th>
-                            <th style="text-align: center; ">CP Code</th>
-                            <th style="text-align: center; ">Remarks</th>
-                            <th style="text-align: center; ">CTO Id</th> -->
-
-                            <!-- <th style="text-align: center;">Action</th> -->
-
-                            <!-- <th>Edit</th> -->
                         </tr>
                     </thead>
                     <tbody>
                         <tr *ngFor='let tradeData of tradeDataList'>
                             <td style="text-align: center;" *ngFor='let tradeInfo of tradeData'>{{tradeInfo}}</td>
-                           <!--  <td>{{tradeData.id? tradeData.id: 'DD-MMM-YYYY'}}</td>
-                            <td>{{tradeData.seqNo ? tradeData.seqNo :'--'}}</td>
-                            <td>{{tradeData.trade_no? tradeData.trade_no: '--'}}</td>
-                            <td>{{tradeData.trade_no? tradeData.trade_time: 'HH:mm:ss'}}</td>
-                            <td style="text-align: center;">>{{tradeData.symbol}}</td>
-                            <td style="text-align: center;">{{tradeData.series}}</td> 
-                            
-                            <td style="text-align: center;">{{tradeData.quantity}}</td>
-                             <td style="text-align: center;">{{tradeData.price}}</td>
-                             <td style="text-align: center;">{{tradeData.trade_value}}</td>
-                             <td style="text-align: center;">{{tradeData.buy_sell}}</td>
-                             <td style="text-align: center;">{{tradeData.order_no}}</td>
-                             <td style="text-align: center;">{{tradeData.branch_no}}</td>
-                             <td style="text-align: center;">{{tradeData.user_id}}</td>
-                             <td style="text-align: center;">{{tradeData.client_type}}</td>
-                             <td style="text-align: center;">{{tradeData.client_ac}}</td>
-                             <td style="text-align: center;">{{tradeData.cp_code}}</td>
-                             <td style="text-align: center;">{{tradeData.remarks}}</td>
-                             <td style="text-align: center;">{{tradeData.cto_id}}</td> -->
                        </tr>
                     </tbody>
                 </table>
@@ -444,7 +407,33 @@
 
 <!-- Video Modal END -->
 
-    <!--Delete Confirmation modal Start -->
+
+<div class="modal fade"  id="switch-market-modal" #switchMarketModal>
+  <div class="modal-dialog"> 
+    <!-- Modal content-->
+     <div class="modal-content">
+      <div class="modal-body">
+        <div class="modal-field col-sm-6" style="padding: 0;">
+            <label for="userId">Select Market:</label>
+            <form [formGroup]="switchMarketForm">
+              <select formControlName="newMarket" id="newMarket" name="newMarket">
+                <option *ngFor="let market of allowedMarkets" [ngValue]="market">
+                  {{ market }}
+                </option>
+              </select>
+            </form>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default btn-success" [disabled]="fileError"  (click)="switchMarket()" >Confirm</button>    
+        <button type="button" class="btn btn-default btn-danger" data-dismiss="modal" #closeDeleteBtn>Cancel</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+    <!--upload-file-modal Start -->
 <div class="modal fade"  id="upload-file-modal" #uploadFileModal>
   <div class="modal-dialog"> 
     <!-- Modal content-->
@@ -467,17 +456,6 @@
 
   </div>
 </div>
-<!--Delete Confirmation modal End -->
+<!--upload-file-modal End -->
 
-<!-- <script type="text/javascript">
-    $("#adsEdit").on('hidden.bs.modal', function (e) {
-      $("#adsEdit iframe").attr("src", $("#adsEdit iframe").attr("src"));
-    });
 
-    // $('#video-modal').on('shown.bs.modal', function () {
-    //   $('#video1')[0].play();
-    // });
-    // $('#video-modal').on('hidden.bs.modal', function (e) {
-    //   $('#video-modal video')[0].load();
-    // });
-</script> -->

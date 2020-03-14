@@ -20,7 +20,7 @@ export class SummaryService {
     	return this.http.post(`${this.API_URL}getTradeData`, requestObj);
   	}
     getTradeDataBackup(requestObj) {
-      return this.http.post(`${this.API_URL}getTradeDataBackup`, requestObj);
+      return this.http.post(`${this.API_URL}getTradeDataBackup?marketType=${localStorage.getItem('marketType')}`, requestObj);
     }
   	getFiltersMetadata(requestObj) {
     	return this.http.get(`${this.API_URL}filters/metadata?token=${requestObj.token}&marketType=${requestObj.marketType}`);

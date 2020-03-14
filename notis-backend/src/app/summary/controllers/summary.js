@@ -23,6 +23,7 @@ class SummaryTradeData{
         return new Promise(async (resolve, reject) => {
             // let tokenController = new TokenController();
             try{
+              console.log("Inside getTradeData()")
             	let commoncheck = this.CommonController.commonCheck(reqdata, ['marketType'], 'body');
                 console.log("Common Check ----> ",commoncheck);
                 if(commoncheck && commoncheck.length){
@@ -40,18 +41,8 @@ class SummaryTradeData{
                         marketType = NseFO;
                         break;
                 }
-                let findPromise = marketType.findAll({ 
-                    raw:true
-                });
-
-                let countPromise =  marketType.findAll({
-                    attributes: [
-                        [Sequelize.literal("sum(case when bsFlg = 2 then trdQty else 0 end)"), 'TotalSell'],
-                        [Sequelize.literal("sum(case when bsFlg = 1 then trdQty else 0 end)"), 'TotalBuy'],
-                        [Sequelize.literal("sum(trdQty)"), 'TotalTradeValue'],
-                        [Sequelize.literal("sum(1)"), 'TotalTrade']
-                    ]
-                })
+                let findPromise = null;
+                let countPromise = null;
                 if(reqdata.body.filters){
                     console.log("1. Received Filters --------------------->>>>> ",reqdata.body.filters)
                     if(reqdata.body.filters.tradeType == 'buy'){
@@ -93,7 +84,8 @@ class SummaryTradeData{
                     delete reqdata.body.filters.tradeType;
                     console.log("2. Processed Filters --------------------->>>>> ",reqdata.body.filters)
 
-                    findPromise = marketType.findAll({ 
+                    findPromise = marketType.findAll({
+                        attributes: [['id', 'ID'],['trdNo','Trade Number'],['ordNo','Order Number'],['mkt','Market Type'], ['proCli', 'PRO/CLI'], ['cliActNo', 'Account No.'], ['cpCd', 'CP Code'], ['security', 'Security Name'],['sym','Symbol'],['ser','Series'],['bsFlg', 'Buy/Sell'],['trdQty', 'Trade Qty'],['trdPrc','Trade Price'],['createdAt', 'Date & Time']], 
                         where: reqdata.body.filters,
                         
                     });
@@ -108,6 +100,20 @@ class SummaryTradeData{
                         where: reqdata.body.filters
                     })
 
+                }else{
+                  findPromise = marketType.findAll({ 
+                      attributes: [['id', 'ID'],['trdNo','Trade Number'],['ordNo','Order Number'],['mkt','Market Type'], ['proCli', 'PRO/CLI'], ['cliActNo', 'Account No.'], ['cpCd', 'CP Code'], ['security', 'Security Name'],['sym','Symbol'],['ser','Series'],['bsFlg', 'Buy/Sell'],['trdQty', 'Trade Qty'],['trdPrc','Trade Price'],['createdAt', 'Date & Time']], 
+                      raw:true
+                  });
+
+                  countPromise =  marketType.findAll({
+                      attributes: [
+                          [Sequelize.literal("sum(case when bsFlg = 2 then trdQty else 0 end)"), 'TotalSell'],
+                          [Sequelize.literal("sum(case when bsFlg = 1 then trdQty else 0 end)"), 'TotalBuy'],
+                          [Sequelize.literal("sum(trdQty)"), 'TotalTradeValue'],
+                          [Sequelize.literal("sum(1)"), 'TotalTrade']
+                      ]
+                  })
                 }
 
                 let [tradeinfo, trade_sum] = await Promise.all([findPromise,countPromise]);
@@ -150,16 +156,14 @@ class SummaryTradeData{
                         marketType = NseFO;
                         break;
                 }
-                let findPromise = marketType.findAll({ 
-                    raw:true
-                });
 
                 let fileName = `trade_backup_${new Date().getTime()}.csv`;
                 let filePath = `/root/notis-databackup/trade-data/`;
+                let findPromise = null;
                 if(reqdata.body.filters){
                     console.log("1. Received Filters --------------------->>>>> ",reqdata.body.filters)
                     if(reqdata.body.filters.fileName){
-                        fileName = `${reqdata.body.filters.fileName}${reqdata.body.filters.includeDateInFilename ? '_'+new Date() : ''}.csv`;
+                        fileName = `${reqdata.body.filters.fileName}${reqdata.body.filters.includeDateInFilename ? '_'+moment().format(): ''}.csv`;
                         delete reqdata.body.filters.fileName;
                     }                    
                     if(reqdata.body.filters.includeDateInFilename){
@@ -228,133 +232,486 @@ class SummaryTradeData{
                     userFilter: "44215"
                     */
                     
+                }else{
+
+                  findPromise = marketType.findAll({ 
+                      raw:true
+                  });
                 }
 
                 let [tradeinfo] = await Promise.all([findPromise]);
                 console.log("Trade Data ----> ",tradeinfo);
-                const csvWriter = createCsvWriter({
-                  path: `${filePath}${fileName}`,
-                  header: [
-                  {"title":"Trade No.",
-                   "id": "trdNo"
-                  },
-                  {"title":"Trade Status",
-                   "id":"TCd"
-                  },
-                  {"title":"Symbol",
-                   "id":"sym"
-                  },
-                  {"title":"Series",
-                   "id":"ser"
-                  },
-                  {"title":"Instrument Type",
-                   "id":"inst"
-                  },
-                  {"title":"Book Type",
-                   "id": "mktTyp"
-                  },
-                  {"title":"Market Type",
-                   "id": "mkt"
-                  },
-                  {"title":"User Id",
-                   "id":"usrId"
-                  },
-                  {"title":"Branch Id",
-                   "id":"brnCd"
-                  },
-                  {"title":"Buy / Sell Indicator",
-                   "id":"bsFlg"
-                  },
-                  {"title":"Trade Qty",
-                   "id":"trdQty"
-                  },
-                  {"title":"Trade Price",
-                   "id": "trdPrc"
-                  },
-                  {"title":"Pro/Cli",
-                   "id": "proCli"
-                  },
-                  {"title":"Client A/c",
-                   "id": "cliActNo"
-                  },
-                  {"title":"Participant code",
-                   "id": "cpCd"
-                  },
-                  {"title":"Auction Part Type",
-                   "id": "actTyp"
-                  },
-                  {"title":"Auction No",
-                   "id": "aucNo"
-                  },
-                  {"title":"Trade Enrty Date / Time",
-                   "id": "trdTm"
-                  },
-                  {"title":"Trade Modified Date / Time",
-                   "id":"trdTm"
-                  },
-                  {"title":"Order Number",
-                   "id":"ordNo"
-                  },
-                  {"title":"Counter Party Id",
-                   "id": "oppBrokerCd"
-                  },
-                  {"title":"Order Entry Date / Time",
-                   "id": "ordTm"
-                  }
-                  ]
-                });
 
-                csvWriter
-                  .writeRecords(tradeinfo)
-                  .then(function(){
-                     console.log("CSV written Successfully.");
-                     const file = `${filePath}${fileName}`;
-                     
-                     let emailer = require('nodemailer');
-                     let transport = emailer.createTransport({
-                       service: 'gmail',
-                       auth: {
-                         user: 'help.notisapp@gmail.com',
-                         pass: 'notis@123'
-                       },
-                        tls: {
-                            rejectUnauthorized: false
-                        }
-                     });
-
-                     if(reqdata.user.user_email){
-                      let maildata= {
-                        from: 'help.notisapp@gmail.com',
-                        to: reqdata.user.user_email,
-                        cc: ['vishuthedj@gmail.com'],
-                        subject: `Trade Data Backup | ${fileName} | ${new Date()}`,
-                        text: 
-                        `Hi, 
-                        Please find Trade backup file in the attachment section.
-
-                        Regards
-                        Team Notis App
-                        `,
-                        attachments: [
-                            {
-                               path:  `${filePath}${fileName}` //pathOfTheAttachmet
-                            }
-                          ]
-                      };
-                      transport.sendMail(maildata, function(error, a){
-                         if (error) {
-                           console.log("Error in sending mail ---> ",error);
-                           return resolve(that.ResponseController.successResponse(null,'Backup Successfull, Unable to Mail Backup File, File stored on Server.'));
-
-                         } else {
-                           console.log("Mail Sent ---> ",a);
-                           return resolve(that.ResponseController.successResponse(null,'Backup Successfull, Backup File has been mailed to You.'));
-                         }
-                      })
-                     }else{ 
-                        return resolve(that.ResponseController.successResponse(null,'Backup Successfull. Email Id missing, File stored on Server.'));
-                     }
+                if(reqdata.body.marketType == 'CM'){
+                  tradeinfo.map(item => {
+                    item['settPeriod'] = 7;
+                    item['trdTm'] = moment(item['trdTm']).format('MM/DD/YY hh:mm:ss');
+                    item['ordTm'] = moment(item['ordTm']).format('MM/DD/YY hh:mm:ss');
+                    item['oppBrokerCd'] = item['oppBrokerCd'] ? item['oppBrokerCd'] : 'Nil';
+                  })
+                  const csvWriter = createCsvWriter({
+                    path: `${filePath}${fileName}`,
+                    header: [
+                    {"title":"Trade No.",
+                     "id": "trdNo"
+                    },
+                    {"title":"Trade Status",
+                     "id":"TCd"
+                    },
+                    {"title":"Symbol",
+                     "id":"sym"
+                    },
+                    {"title":"Series",
+                     "id":"ser"
+                    },
+                    {"title":"Security Name",
+                     "id":"secName"
+                    },
+                    {"title":"Instrument Type",
+                     "id":"inst"
+                    },
+                    {"title":"Book Type",
+                     "id": "mktTyp"
+                    },
+                    {"title":"Market Type",
+                     "id": "mktTyp"
+                    },
+                    {"title":"User Id",
+                     "id":"usrId"
+                    },
+                    {"title":"Branch Id",
+                     "id":"brnCd"
+                    },
+                    {"title":"Buy / Sell Indicator",
+                     "id":"bsFlg"
+                    },
+                    {"title":"Trade Qty",
+                     "id":"trdQty"
+                    },
+                    {"title":"Trade Price",
+                     "id": "trdPrc"
+                    },
+                    {"title":"Pro/Cli",
+                     "id": "proCli"
+                    },
+                    {"title":"Client A/c",
+                     "id": "cliActNo"
+                    },
+                    {"title":"Participant code",
+                     "id": "cpCd"
+                    },
+                    {"title":"Auction Part Type",
+                     "id": "stpTyp"
+                    },
+                    {"title":"Auction No",
+                     "id": "aucNo"
+                    },
+                    {"title":"Sett Period",
+                     "id": "settPeriod"
+                    },
+                    {"title":"Trade Enrty Date / Time",
+                     "id": "trdTm"
+                    },
+                    {"title":"Trade Modified Date / Time",
+                     "id":"trdTm"
+                    },
+                    {"title":"Order Number",
+                     "id":"ordNo"
+                    },
+                    {"title":"Counter Party Id",
+                     "id": "oppBrokerCd"
+                    },
+                    {"title":"Order Entry Date / Time",
+                     "id": "ordTm"
+                    }
+                    ]
                   });
+
+                  csvWriter
+                    .writeRecords(tradeinfo)
+                    .then(function(){
+                       console.log("CSV written Successfully.");
+                       const file = `${filePath}${fileName}`;
+                       
+                       let emailer = require('nodemailer');
+                       let transport = emailer.createTransport({
+                         service: 'gmail',
+                         auth: {
+                           user: 'help.notisapp@gmail.com',
+                           pass: 'notis@123'
+                         },
+                          tls: {
+                              rejectUnauthorized: false
+                          }
+                       });
+
+                       if(reqdata.user.user_email){
+                        let maildata= {
+                          from: 'help.notisapp@gmail.com',
+                          to: reqdata.user.user_email,
+                          cc: ['vishuthedj@gmail.com'],
+                          subject: `Trade Data Backup | ${fileName} | ${new Date()}`,
+                          text: 
+                          `Hi, 
+                          Please find Trade backup file in the attachment section.
+
+                          Regards
+                          Team Notis App
+                          `,
+                          attachments: [
+                              {
+                                 path:  `${filePath}${fileName}` //pathOfTheAttachmet
+                              }
+                            ]
+                        };
+                        transport.sendMail(maildata, function(error, a){
+                           if (error) {
+                             console.log("Error in sending mail ---> ",error);
+                             return resolve(that.ResponseController.successResponse(null,'Backup Successfull, Unable to Mail Backup File, File stored on Server.'));
+
+                           } else {
+                             console.log("Mail Sent ---> ",a);
+                             return resolve(that.ResponseController.successResponse(null,'Backup Successfull, Backup File has been mailed to You.'));
+                           }
+                        })
+                       }else{ 
+                          return resolve(that.ResponseController.successResponse(null,'Backup Successfull. Email Id missing, File stored on Server.'));
+                       }
+                    });
+                }else if(reqdata.body.marketType == 'CD'){
+                  tradeinfo.map(item => {
+                    item['settPeriod'] = 7;
+                    item['trdTm'] = moment(item['trdTm']).format('MM/DD/YY hh:mm:ss');
+                    item['ordTm'] = moment(item['ordTm']).format('MM/DD/YY hh:mm:ss');
+                    item['expDt'] = moment(item['expDt']).format('MM/DD/YY hh:mm:ss');
+                    switch(item['booktype']){
+                      case '1':
+                        item['booktypename'] = 'RL';
+                        break;
+                      case '2':
+                        item['booktypename'] = 'ST';
+                        break;
+                      case '3':
+                        item['booktypename'] = 'SL';
+                        break;
+                      case '4':
+                        item['booktypename'] = 'NT';
+                        break;
+                      case '7':
+                        item['booktypename'] = 'AU';
+                        break;
+                    }
+                    item['oppBrokerCd'] = item['oppBrokerCd'] ? item['oppBrokerCd'] : 'Nil';
+                    item['ocFlag'] = 'Open';
+                    item['cUcFlag'] = 'Uncover';
+                  })
+                  const csvWriter = createCsvWriter({
+                    path: `${filePath}${fileName}`,
+                    header: [
+                    {"title":"Trade No.",
+                     "id": "trdNo"
+                    },
+                    {"title":"Trade Status",
+                     "id":"actTyp"
+                    },
+                    {"title":"Instrument Type",
+                     "id":"inst"
+                    },
+                    {"title":"Symbol",
+                     "id":"sym"
+                    },
+                    {"title":"Expiry Date",
+                     "id":"expDt"
+                    },
+                    {"title":"Strike Price",
+                     "id":"stePrc"
+                    },
+                    {"title":"Option Type",
+                     "id":"optTyp"
+                    },
+                    {"title":"Security Name",
+                     "id":"secName"
+                    },
+                    {"title":"Book Type",
+                     "id": "booktype"
+                    },
+                    {"title":"Book Type Name",
+                     "id": "booktypename"
+                    },
+                    {"title":"Market Type",
+                     "id": "mktTyp"
+                    },
+                    {"title":"User Id",
+                     "id":"usrId"
+                    },
+                    {"title":"Branch Id",
+                     "id":"brnCd"
+                    },
+                    {"title":"Buy / Sell Indicator",
+                     "id":"bsFlg"
+                    },
+                    {"title":"Trade Qty",
+                     "id":"trdQty"
+                    },
+                    {"title":"Trade Price",
+                     "id": "trdPrc"
+                    },
+                    {"title":"Pro/Cli",
+                     "id": "proCli"
+                    },
+                    {"title":"Client A/c",
+                     "id": "cliActNo"
+                    },
+                    {"title":"Participant code",
+                     "id": "cpCd"
+                    },
+                    {"title":"Open / Close Flag",
+                     "id": "ocFlag"
+                    },
+                    {"title":"Covered / Uncovered Flag",
+                     "id": "cUcFlag"
+                    },
+                    {"title":"Trade Enrty Date / Time",
+                     "id": "trdTm"
+                    },
+                    {"title":"Trade Modified Date / Time",
+                     "id":"trdTm"
+                    },
+                    {"title":"Order Number",
+                     "id":"ordNo"
+                    },
+                    {"title":"TM Code",
+                     "id": "TmCd"
+                    },
+                    {"title":"Order Entry Date / Time",
+                     "id": "ordTm"
+                    },
+                    {"title":"CTCL ID",
+                     "id": "ctclId"
+                    }
+                    ]
+                  });
+
+                  csvWriter
+                    .writeRecords(tradeinfo)
+                    .then(function(){
+                       console.log("CSV written Successfully.");
+                       const file = `${filePath}${fileName}`;
+                       
+                       let emailer = require('nodemailer');
+                       let transport = emailer.createTransport({
+                         service: 'gmail',
+                         auth: {
+                           user: 'help.notisapp@gmail.com',
+                           pass: 'notis@123'
+                         },
+                          tls: {
+                              rejectUnauthorized: false
+                          }
+                       });
+
+                       if(reqdata.user.user_email){
+                        let maildata= {
+                          from: 'help.notisapp@gmail.com',
+                          to: reqdata.user.user_email,
+                          cc: ['vishuthedj@gmail.com'],
+                          subject: `Trade Data Backup | ${fileName} | ${new Date()}`,
+                          text: 
+                          `Hi, 
+                          Please find Trade backup file in the attachment section.
+
+                          Regards
+                          Team Notis App
+                          `,
+                          attachments: [
+                              {
+                                 path:  `${filePath}${fileName}` //pathOfTheAttachmet
+                              }
+                            ]
+                        };
+                        transport.sendMail(maildata, function(error, a){
+                           if (error) {
+                             console.log("Error in sending mail ---> ",error);
+                             return resolve(that.ResponseController.successResponse(null,'Backup Successfull, Unable to Mail Backup File, File stored on Server.'));
+
+                           } else {
+                             console.log("Mail Sent ---> ",a);
+                             return resolve(that.ResponseController.successResponse(null,'Backup Successfull, Backup File has been mailed to You.'));
+                           }
+                        })
+                       }else{ 
+                          return resolve(that.ResponseController.successResponse(null,'Backup Successfull. Email Id missing, File stored on Server.'));
+                       }
+                    });
+                }else if(reqdata.body.marketType == 'FO'){
+                  tradeinfo.map(item => {
+                    item['settPeriod'] = 7;
+                    item['trdTm'] = moment(item['trdTm']).format('MM/DD/YY hh:mm:ss');
+                    item['ordTm'] = moment(item['ordTm']).format('MM/DD/YY hh:mm:ss');
+                    item['expDt'] = moment(item['expDt']).format('MM/DD/YY hh:mm:ss');
+                    switch(item['booktype']){
+                      case '1':
+                        item['booktypename'] = 'RL';
+                        break;
+                      case '2':
+                        item['booktypename'] = 'ST';
+                        break;
+                      case '3':
+                        item['booktypename'] = 'SL';
+                        break;
+                      case '4':
+                        item['booktypename'] = 'NT';
+                        break;
+                      case '7':
+                        item['booktypename'] = 'AU';
+                        break;
+                    }
+                    item['oppBrokerCd'] = item['oppBrokerCd'] ? item['oppBrokerCd'] : 'Nil';
+                    item['ocFlag'] = 'Open';
+                    item['cUcFlag'] = 'Uncover';
+                  })
+                  const csvWriter = createCsvWriter({
+                    path: `${filePath}${fileName}`,
+                    header: [
+                    {"title":"Trade No.",
+                     "id": "trdNo"
+                    },
+                    {"title":"Trade Status",
+                     "id":"actTyp"
+                    },
+                    {"title":"Instrument Type",
+                     "id":"inst"
+                    },
+                    {"title":"Symbol",
+                     "id":"sym"
+                    },
+                    {"title":"Expiry Date",
+                     "id":"expDt"
+                    },
+                    {"title":"Strike Price",
+                     "id":"stePrc"
+                    },
+                    {"title":"Option Type",
+                     "id":"optTyp"
+                    },
+                    {"title":"Security Name",
+                     "id":"secName"
+                    },
+                    {"title":"Book Type",
+                     "id": "booktype"
+                    },
+                    {"title":"Book Type Name",
+                     "id": "booktypename"
+                    },
+                    {"title":"Market Type",
+                     "id": "mktTyp"
+                    },
+                    {"title":"User Id",
+                     "id":"usrId"
+                    },
+                    {"title":"Branch Id",
+                     "id":"brnCd"
+                    },
+                    {"title":"Buy / Sell Indicator",
+                     "id":"bsFlg"
+                    },
+                    {"title":"Trade Qty",
+                     "id":"trdQty"
+                    },
+                    {"title":"Trade Price",
+                     "id": "trdPrc"
+                    },
+                    {"title":"Pro/Cli",
+                     "id": "proCli"
+                    },
+                    {"title":"Client A/c",
+                     "id": "cliActNo"
+                    },
+                    {"title":"Participant code",
+                     "id": "cpCd"
+                    },
+                    {"title":"Open / Close Flag",
+                     "id": "ocFlag"
+                    },
+                    {"title":"Covered / Uncovered Flag",
+                     "id": "cUcFlag"
+                    },
+                    {"title":"Trade Enrty Date / Time",
+                     "id": "trdTm"
+                    },
+                    {"title":"Trade Modified Date / Time",
+                     "id":"trdTm"
+                    },
+                    {"title":"Order Number",
+                     "id":"ordNo"
+                    },
+                    {"title":"TM Code",
+                     "id": "TmCd"
+                    },
+                    {"title":"Order Entry Date / Time",
+                     "id": "ordTm"
+                    },
+                    {"title":"CTCL ID",
+                     "id": "ctclId"
+                    }
+                    ]
+                  });
+
+                  csvWriter
+                    .writeRecords(tradeinfo)
+                    .then(function(){
+                       console.log("CSV written Successfully.");
+                       const file = `${filePath}${fileName}`;
+                       
+                       let emailer = require('nodemailer');
+                       let transport = emailer.createTransport({
+                         service: 'gmail',
+                         auth: {
+                           user: 'help.notisapp@gmail.com',
+                           pass: 'notis@123'
+                         },
+                          tls: {
+                              rejectUnauthorized: false
+                          }
+                       });
+
+                       if(reqdata.user.user_email){
+                        let maildata= {
+                          from: 'help.notisapp@gmail.com',
+                          to: reqdata.user.user_email,
+                          cc: ['vishuthedj@gmail.com'],
+                          subject: `Trade Data Backup | ${fileName} | ${new Date()}`,
+                          text: 
+                          `Hi, 
+                          Please find Trade backup file in the attachment section.
+
+                          Regards
+                          Team Notis App
+                          `,
+                          attachments: [
+                              {
+                                 path:  `${filePath}${fileName}` //pathOfTheAttachmet
+                              }
+                            ]
+                        };
+                        transport.sendMail(maildata, function(error, a){
+                           if (error) {
+                             console.log("Error in sending mail ---> ",error);
+                             return resolve(that.ResponseController.successResponse(null,'Backup Successfull, Unable to Mail Backup File, File stored on Server.'));
+
+                           } else {
+                             console.log("Mail Sent ---> ",a);
+                             return resolve(that.ResponseController.successResponse(null,'Backup Successfull, Backup File has been mailed to You.'));
+                           }
+                        })
+                       }else{ 
+                          return resolve(that.ResponseController.successResponse(null,'Backup Successfull. Email Id missing, File stored on Server.'));
+                       }
+                    });
+                }else{
+                  return resolve(this.ResponseController.forbiddenErrorResponse("Stock Exchange Data for this market is Not Availble."))
+                }
+
             } catch(e){
                 reject(e);
             }

@@ -16,6 +16,7 @@ let nseDataModel = DBConnection.define('nse_users', {
     user_img_url: { type: Sequelize.STRING, allowNull: true },
     last_login_at: { type: Sequelize.DATE, allowNull: true },
     otp: { type: Sequelize.INTEGER, allowNull: true },
+    permitted_markets:{ type: Sequelize.STRING, allowNull: false },
     created_at: { type: Sequelize.DATE, allowNull: false, defaultValue: Sequelize.NOW },
     updated_at: { type: Sequelize.DATE, allowNull: false, defaultValue: Sequelize.NOW },
 
